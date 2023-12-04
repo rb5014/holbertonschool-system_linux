@@ -11,9 +11,9 @@
 */
 int main(int argc, char *argv[])
 {
-	struct dirent **dir_name_list;
-	int n;
+	DIR *dir;
 	char *dir_name;
+	struct dirent *read;
 
 	if (argc > 1)
 	{
@@ -24,23 +24,14 @@ int main(int argc, char *argv[])
 		dir_name = ".";
 	}
 
-	n = scandir(dir_name, &dir_name_list, 0, alphasort);
+	dir = opendir(dir_name);
 
-	if (n < 0)
+	while ((read = readdir(dir)) != NULL)
 	{
-		perror("scandir error");
+		printf("%s\n", read->d_name);
 	}
-	else
-	{
-		int i;
 
-		for (i = 0; i < n; i++)
-		{
-			printf("%s\n", dir_name_list[i]->d_name);
-			free(dir_name_list[i]);
-		}
-		free(dir_name_list);
-	}
+	closedir(dir);
 
 	return (0);
 }
