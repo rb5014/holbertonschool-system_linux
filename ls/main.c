@@ -56,11 +56,15 @@ void scan_dir(char *dir_name, int n_elems)
 	DIR *dir;
 	struct dirent *read;
 	int i;
-	char name_list[n_elems][256];
+	char **name_list;
+
+	name_list = (char **)malloc(n_elems * sizeof(char *));
+
 
 	dir = opendir(dir_name);
 	for (i = 0; (read = readdir(dir)) != NULL; i++)
 	{
+		name_list[i] = (char *)malloc(sizeof(char) * 256);
 		strncpy(name_list[i], read->d_name, 256);
 	}
 
@@ -73,7 +77,10 @@ void scan_dir(char *dir_name, int n_elems)
 		{
 			printf("%s\n", name_list[n_elems]);
 		}
+		free(name_list[n_elems]);
 	}
+	free(name_list);
+
 }
 
 
