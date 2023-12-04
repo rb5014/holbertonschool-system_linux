@@ -4,111 +4,72 @@
 #include <stdlib.h>
 #include <string.h>
 
-/**
- * cmpstringp - compare to strings
- * @p1: string pointer
- * @p2: string pointer
- *
- * Return: 0 if they are equal,
- * >0 if the first non-matching character in str1
- *  is greater (in ASCII) than that of str2,
- * <0 if the first non-matching character in str1
- *  is lower (in ASCII) than that of str2.
- *
-*/
+#define MAX_NAME_LENGTH 256
+
 int cmpstringp(const void *p1, const void *p2)
 {
-	return (strcmp((const char *) p1, (const char *) p2));
+    return strcmp((const char *)p1, (const char *)p2);
 }
 
-/**
- * get_number_of_elements - return the number of elements in the directory
- * with the names of the elements it contains
- * @dir_name: directory name
- * Return: pointer to the "array" of string
-*/
-int get_number_of_elements(char *dir_name)
+void scan_dir(char *dir_name)
 {
-	DIR *dir;
-	struct dirent *read;
-	int i = 0;
+    DIR *dir;
+    struct dirent *read;
+    int j = 0, k = 0;
+    char **name_list = NULL;
 
-	dir = opendir(dir_name);
-	while ((read = readdir(dir)) != NULL)
-	{
-		i++;
-	}
-	closedir(dir);
-	return (i);
+    dir = opendir(dir_name);
+
+    if (dir == NULL)
+    {
+        perror("Error opening directory");
+        return;
+    }
+
+    while ((read = readdir(dir)) != NULL)
+    {
+        if (strcmp(read->d_name, ".") != 0 && strcmp(read->d_name, "..") != 0)
+        {
+            name_list = (char **)realloc(name_list, sizeof(char *) * (j + 1));
+            name_list[j] = (char *)malloc(MAX_NAME_LENGTH);
+
+            if (name_list[j] == NULL)
+            {
+                perror("Error allocating memory");
+                break; // Exit the loop if memory allocation fails
+            }
+
+            // Manually copy characters
+            for (k = 0; read->d_name[k] != '\0'; k++)
+            {
+                name_list[j][k] = read->d_name[k];
+            }
+            name_list[j][k] = '\0'; // Add the null terminator
+            j++;
+        }
+    }
+
+    // Print and free in the reverse order
+    while (j--)
+    {
+        printf("%s\n", name_list[j]);
+        free(name_list[j]);
+    }
+
+    free(name_list);
+    closedir(dir);
 }
 
-/**
- * scan_dir - scan the directory argument and return an array of strings
- * with the names of the elements it contains
- *
- * @dir_name: directory name
- * @n_elems: number of elements
- *
- * Return: pointer to the "array" of string
-*/
-void scan_dir(char *dir_name, int n_elems)
-{
-	DIR *dir;
-	struct dirent *read;
-	int i, j;
-	char **name_list;
-
-	name_list = (char **)malloc(n_elems * sizeof(char *));
-
-
-	dir = opendir(dir_name);
-	for (i = 0; (read = readdir(dir)) != NULL; i++)
-	{
-		name_list[i] = (char *)malloc(sizeof(char) * 256);
-		for (j = 0; read->d_name[j] != '\0'; j++)
-		{
-			name_list[i][j] = read->d_name[j];
-		}
-	}
-
-	/* qsort(name_list, n_elems, sizeof(char *), cmpstringp); */
-	closedir(dir);
-
-	while (n_elems--)
-	{
-		if (name_list[n_elems][0] != '.')
-		{
-			printf("%s\n", name_list[n_elems]);
-		}
-		free(name_list[n_elems]);
-	}
-	free(name_list);
-
-}
-
-
-/**
- * main - main - entry point
- * @argc: compteur d'arguments
- * @argv: pointeur de tableau de char pour les arguments
- * Return: 0 if successfull
-*/
 int main(int argc, char *argv[])
 {
-	int n_elems = 0;
-	char *dir_name = "";
+    char *dir_name = "."; // Default directory
 
-	if (argc > 1)
-	{
-		dir_name = argv[1];
-	}
-	else
-	{
-		dir_name = ".";
-	}
+    if (argc > 1)
+    {
+        dir_name = argv[1];
+    }
 
-	n_elems = get_number_of_elements(dir_name);
-	scan_dir(dir_name, n_elems);
+    scan_dir(dir_name);
 
-	return (0);
+    return 0;
 }
