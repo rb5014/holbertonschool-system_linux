@@ -55,7 +55,7 @@ void scan_dir(char *dir_name, int n_elems)
 {
 	DIR *dir;
 	struct dirent *read;
-	int i;
+	int i, j;
 	char **name_list;
 
 	name_list = (char **)malloc(n_elems * sizeof(char *));
@@ -65,7 +65,10 @@ void scan_dir(char *dir_name, int n_elems)
 	for (i = 0; (read = readdir(dir)) != NULL; i++)
 	{
 		name_list[i] = (char *)malloc(sizeof(char) * 256);
-		strncpy(name_list[i], read->d_name, 256);
+		for (j = 0; read->d_name[j] != '\0'; j++)
+		{
+			name_list[i][j] = read->d_name[j];
+		}
 	}
 
 	/* qsort(name_list, n_elems, sizeof(char *), cmpstringp); */
