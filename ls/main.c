@@ -36,9 +36,6 @@ int main(int argc, char *argv[])
 			free(dir_name_list);
 		}
 	}
-	else
-	{
-		printf("no arguments\n");
-	}
+
 	return (0);
 }
