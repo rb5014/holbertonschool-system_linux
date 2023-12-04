@@ -99,7 +99,8 @@ char **scan_dir(char *dir_name, int *num_entries)
  */
 void print_and_free_entries(char **name_list, int num_entries)
 {
-	for (int i = num_entries - 1; i >= 0; i--)
+	int i;
+	for (i = num_entries - 1; i >= 0; i--)
 	{
 		printf("%s\n", name_list[i]);
 		free(name_list[i]);
@@ -119,14 +120,14 @@ int main(int argc, char *argv[])
 {
 	char *dir_name = ".";
 	int num_entries = 0;
+	char **entries;
 
 	if (argc > 1)
 	{
 		dir_name = argv[1];
 	}
 
-	char **entries = scan_dir(dir_name, &num_entries);
-
+	entries = scan_dir(dir_name, &num_entries);
 	print_and_free_entries(entries, num_entries);
 
 	return (0);
