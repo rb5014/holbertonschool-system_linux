@@ -26,7 +26,9 @@ int main(int argc, char *argv[])
 		}
 		else
 		{
-			for (int i = 0; i < n; i++)
+			int i;
+
+			for (i = 0; i < n; i++)
 			{
 				printf("%s\n", dir_name_list[i]->d_name);
 				free(dir_name_list[i]);
