@@ -13,28 +13,33 @@ int main(int argc, char *argv[])
 {
 	struct dirent **dir_name_list;
 	int n;
+	char *dir_name;
 
 	if (argc > 1)
 	{
-		char *dir_name = argv[1];
+		dir_name = argv[1];
+	}
+	else
+	{
+		dir_name = ".";
+	}
 
-		n = scandir(dir_name, &dir_name_list, 0, alphasort);
+	n = scandir(dir_name, &dir_name_list, 0, alphasort);
 
-		if (n < 0)
+	if (n < 0)
+	{
+		perror("scandir error");
+	}
+	else
+	{
+		int i;
+
+		for (i = 0; i < n; i++)
 		{
-			perror("scandir error");
+			printf("%s\n", dir_name_list[i]->d_name);
+			free(dir_name_list[i]);
 		}
-		else
-		{
-			int i;
-
-			for (i = 0; i < n; i++)
-			{
-				printf("%s\n", dir_name_list[i]->d_name);
-				free(dir_name_list[i]);
-			}
-			free(dir_name_list);
-		}
+		free(dir_name_list);
 	}
 
 	return (0);
