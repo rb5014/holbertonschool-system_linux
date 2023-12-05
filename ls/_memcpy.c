@@ -1,5 +1,6 @@
 #include <stddef.h>
 #include "custom_functions.h"
+#include <stdio.h>
 
 /**
  * _memcpy - Copy memory area
