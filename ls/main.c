@@ -25,15 +25,34 @@ int main(int argc, char *argv[])
 	/* Initialize variables */
 	char **names = NULL;
 	int count = 0;
+	int nth_arg;
+	bool is_mult_dirs = false;
+	const char *dir_path;
 
 	/* Check if a directory name is provided as a command-line argument */
-	const char *dir_path = (argc > 1) ? argv[1] : ".";
+	if (argc <= 1)
+	{
+		argv[1] = ".";
 
-	/* Read the contents of the specified directory */
-	read_directory(dir_path, &names, &count);
+		/* argv[2] would be SHELL=/bin/bash in that case */
+		argv[2] = NULL;
+	} else
+	{
+		is_mult_dirs = true;
+		_qsort(&argv[1], argc - 1, sizeof(char *), compare_names);
+	}
 
-	/* Print the sorted names */
-	print_sorted_names(names, count);
+
+	for (nth_arg = 1; argv[nth_arg] != NULL; nth_arg++)
+	{
+		dir_path = argv[nth_arg];
+
+		/* Read the contents of the specified directory */
+		read_directory(dir_path, &names, &count);
+
+		/* Print the sorted names */
+		print_sorted_names(names, count, dir_path, is_mult_dirs);
+	}
 
 	/* Clean up and exit */
 	return (0);
