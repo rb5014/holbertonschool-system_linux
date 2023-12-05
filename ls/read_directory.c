@@ -4,6 +4,24 @@
 #include "custom_functions.h"
 
 /**
+ * is_dot_entry - Check if the directory entry is "." or "..".
+ * @entry: Directory entry.
+ *
+ * Return: 1 if it is ".", 2 if it is "..", 0 otherwise.
+ */
+int is_dot_entry(const struct dirent *entry)
+{
+	if (entry->d_name[0] == '.')
+	{
+		if (entry->d_name[1] == '\0')
+			return (1); /* It is "." */
+		if (entry->d_name[1] == '.' && entry->d_name[2] == '\0')
+			return (2); /* It is ".." */
+	}
+	return (0); /* It is neither "." nor ".." */
+}
+
+/**
  * count_entries - Count the number of entries in a directory.
  * @dir_path: Path to the directory.
  *
@@ -54,24 +72,6 @@ char **allocate_names(int count)
 		exit(EXIT_FAILURE);
 	}
 	return (names);
-}
-
-/**
- * is_dot_entry - Check if the directory entry is "." or "..".
- * @entry: Directory entry.
- *
- * Return: 1 if it is ".", 2 if it is "..", 0 otherwise.
- */
-int is_dot_entry(const struct dirent *entry)
-{
-	if (entry->d_name[0] == '.')
-	{
-		if (entry->d_name[1] == '\0')
-			return (1); /* It is "." */
-		if (entry->d_name[1] == '.' && entry->d_name[2] == '\0')
-			return (2); /* It is ".." */
-	}
-	return (0); /* It is neither "." nor ".." */
 }
 
 /**
