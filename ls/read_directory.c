@@ -1,6 +1,3 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <dirent.h>
 #include "custom_functions.h"
 
 /**
@@ -24,14 +21,14 @@ int is_dot_entry(const struct dirent *entry)
 
 /**
  * count_entries - Count the number of entries in a directory.
- * @dir_path: Path to the directory.
+ * @path: Path to the directory.
  *
  * Return: Number of entries in the directory.
  */
-int count_entries(const char *dir_path)
+int count_entries(const char *path)
 {
 	int count = 0;
-	DIR *dir = opendir(dir_path);
+	DIR *dir = opendir(path);
 	struct dirent *entry;
 
 	if (dir == NULL)
@@ -77,13 +74,13 @@ char **allocate_names(int count)
 
 /**
  * populate_names - Populate an array of names from a directory.
- * @dir_path: Path to the directory.
+ * @path: Path to the directory.
  * @names: Pointer to the array of names.
  * @count: Pointer to the count of names.
  */
-void populate_names(const char *dir_path, char **names, int *count)
+void populate_names(const char *path, char **names, int *count)
 {
-	DIR *dir = opendir(dir_path);
+	DIR *dir = opendir(path);
 	struct dirent *entry;
 
 	if (dir == NULL)
@@ -121,13 +118,13 @@ void populate_names(const char *dir_path, char **names, int *count)
 
 /**
  * read_directory - Read a directory and populate an array of names.
- * @dir_path: Path to the directory.
+ * @path: Path to the directory.
  * @names: Pointer to the array of names.
  * @count: Pointer to the count of names.
  */
-void read_directory(const char *dir_path, char ***names, int *count)
+void read_directory(const char *path, char ***names, int *count)
 {
-	*count = count_entries(dir_path);
+	*count = count_entries(path);
 	*names = allocate_names(*count);
-	populate_names(dir_path, *names, count);
+	populate_names(path, *names, count);
 }

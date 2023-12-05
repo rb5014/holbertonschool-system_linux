@@ -2,6 +2,12 @@
 #define CUSTOM_FUNCTIONS_H
 
 #include <stddef.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <dirent.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
 
 /* Define the boolean type*/
 typedef int bool;
@@ -10,10 +16,12 @@ typedef int bool;
 
 /* Define the comparison function type */
 typedef int (*cmp_func)(const void*, const void*);
-
-void read_directory(const char *dir_path, char ***names, int *count);
+int check_entries(char ***argv);
+void process_entries(int n_args, char **argv, bool is_mult_dirs);
+void sort_entries(int n_args, char ***argv);
+void read_directory(const char *path, char ***names, int *count);
 void print_sorted_names(char **names, int count,
-						const char *dir_path, bool is_mult_dirs);
+						const char *path, bool is_mult_dirs);
 int compare_names(const void *a, const void *b);
 int _strcmp_icase(const char *a, const char *b);
 void *_realloc(void *ptr, size_t size);
