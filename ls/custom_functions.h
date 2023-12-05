@@ -8,7 +8,7 @@ typedef int (*cmp_func)(const void*, const void*);
 
 void read_directory(const char *dir_path, char ***names, int *count);
 void print_sorted_names(char **names, int count);
-int _strcmp(const char *a, const char *b);
+int _strcmp_icase(const char *a, const char *b);
 void *_realloc(void *ptr, size_t size);
 char *_strcpy(char *dest, const char *src);
 size_t _strlen(const char *str);

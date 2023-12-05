@@ -12,7 +12,7 @@
  */
 int compare_names(const void *a, const void *b)
 {
-	return (_strcmp(*(const char **)a, *(const char **)b));
+	return (_strcmp_icase(*(const char **)a, *(const char **)b));
 }
 
 /**
