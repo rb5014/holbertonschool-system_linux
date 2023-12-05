@@ -43,6 +43,7 @@ int is_dot_entry(const struct dirent *entry)
 void read_directory(const char *dir_path, char ***names, int *count)
 {
 	DIR *dir = opendir(dir_path);
+	struct dirent *entry;
 
 	if (dir == NULL)
 	{
@@ -50,10 +51,10 @@ void read_directory(const char *dir_path, char ***names, int *count)
 		exit(EXIT_FAILURE);
 	}
 
-	struct dirent *entry;
 
 	while ((entry = readdir(dir)) != NULL)
 	{
+		char *name;
 
 		int dotType = is_dot_entry(entry);
 
@@ -63,7 +64,7 @@ void read_directory(const char *dir_path, char ***names, int *count)
 			continue;
 		}
 
-		char *name = malloc(_strlen(entry->d_name) + 1);
+		name = malloc(_strlen(entry->d_name) + 1);
 
 		_strcpy(name, entry->d_name);
 
@@ -81,9 +82,11 @@ void read_directory(const char *dir_path, char ***names, int *count)
  */
 void print_sorted_names(char **names, int count)
 {
+	int i;
+
 	qsort(names, count, sizeof(char *), compare_names);
 
-	for (int i = 0; i < count; i++)
+	for (i = 0; i < count; i++)
 	{
 		printf("%s\n", names[i]);
 		free(names[i]);
