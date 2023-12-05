@@ -1,134 +1,128 @@
 #include <stdio.h>
-#include <sys/types.h>
-#include <dirent.h>
 #include <stdlib.h>
-#include <string.h>
-
-#define MAX_NAME_LENGTH 256
+#include <dirent.h>
+#include "custom_functions.h"
 
 /**
- * cmpstringp - compare two strings for qsort
- * @p1: string pointer
- * @p2: string pointer
+ * compare_names - Compare two strings.
+ * @a: First string.
+ * @b: Second string.
  *
- * Return: 0 if equal, >0 if str1 is greater, <0 if str1 is lower
+ * Return: 0 if strings are equal, positive if the first non-matching character
+ * in a is greater than that of b, negative otherwise.
  */
-int cmpstringp(const void *p1, const void *p2)
+int compare_names(const void *a, const void *b)
 {
-	return (strcmp((const char *)p1, (const char *)p2));
+	return (_strcmp(*(const char **)a, *(const char **)b));
 }
 
 /**
- * process_entry - process a directory entry
- * @entry: directory entry pointer
- * @name_list: pointer to array of strings
- * @current_index: pointer to the current index in the array
+ * is_dot_entry - Check if the directory entry is "." or "..".
+ * @entry: Directory entry.
  *
- * Allocates memory for the entry name and copies it into the array.
- *
- * Returns: nothing
+ * Return: 1 if it is ".", 2 if it is "..", 0 otherwise.
  */
-void process_entry(struct dirent *entry, char ***name_list, int *current_index)
+int is_dot_entry(const struct dirent *entry)
 {
-	int k = 0;
-
-	(*name_list) = (char **)realloc((*name_list),
-	 sizeof(char *) * ((*current_index) + 1));
-	(*name_list)[(*current_index)] = (char *)malloc(MAX_NAME_LENGTH);
-
-	if ((*name_list)[(*current_index)] == NULL)
+	if (entry->d_name[0] == '.')
 	{
-		perror("Error allocating memory");
-		exit(EXIT_FAILURE); /* Exit the program if memory allocation fails */
+		if (entry->d_name[1] == '\0')
+			return (1); /* It is "." */
+		if (entry->d_name[1] == '.' && entry->d_name[2] == '\0')
+			return (2); /* It is ".." */
 	}
-
-	/* Manually copy characters */
-	for (k = 0; entry->d_name[k] != '\0'; k++)
-	{
-		(*name_list)[(*current_index)][k] = entry->d_name[k];
-	}
-	(*name_list)[(*current_index)][k] = '\0'; /* Add the null terminator */
-	(*current_index)++;
+	return (0); /* It is neither "." nor ".." */
 }
 
 /**
- * scan_dir - scan a directory and return an array of entry names
- * @dir_name: directory name
- * @num_entries: pointer to store the number of entries
- *
- * Returns: an array of entry names
+ * read_directory - Read the contents of the directory, excluding "." and "..".
+ * @dir_path: Path of the directory.
+ * @names: Pointer to an array to store names.
+ * @count: Pointer to the count of names.
  */
-char **scan_dir(char *dir_name, int *num_entries)
+void read_directory(const char *dir_path, char ***names, int *count)
 {
-	DIR *dir;
-	struct dirent *read;
-	int j = 0;
-
-	char **name_list = NULL;
-
-	dir = opendir(dir_name);
+	DIR *dir = opendir(dir_path);
 
 	if (dir == NULL)
 	{
 		perror("Error opening directory");
-		exit(EXIT_FAILURE); /* Exit the program if directory cannot be opened */
+		exit(EXIT_FAILURE);
 	}
 
-	while ((read = readdir(dir)) != NULL)
+	struct dirent *entry;
+
+	while ((entry = readdir(dir)) != NULL)
 	{
-		if (strcmp(read->d_name, ".") != 0 && strcmp(read->d_name, "..") != 0)
+
+		int dotType = is_dot_entry(entry);
+
+		if (dotType > 0)
 		{
-			process_entry(read, &name_list, &j);
+			/* Exclude "." and ".." entry */
+			continue;
 		}
+
+		char *name = malloc(_strlen(entry->d_name) + 1);
+
+		_strcpy(name, entry->d_name);
+
+		*names = _realloc(*names, (*count + 1) * sizeof(char *));
+		(*names)[(*count)++] = name;
 	}
 
 	closedir(dir);
-	*num_entries = j;
-
-	return (name_list);
 }
 
 /**
- * print_and_free_entries - print and free entry names
- * @name_list: array of entry names
- * @num_entries: number of entries
- *
- * Prints and frees the entry names in reverse order.
- *
- * Returns: nothing
+ * print_sorted_names - Print the names in lexicographical order.
+ * @names: Array of names.
+ * @count: Number of names.
  */
-void print_and_free_entries(char **name_list, int num_entries)
+void print_sorted_names(char **names, int count)
 {
-	int i;
-	for (i = num_entries - 1; i >= 0; i--)
-	{
-		printf("%s\n", name_list[i]);
-		free(name_list[i]);
-	}
+	qsort(names, count, sizeof(char *), compare_names);
 
-	free(name_list);
+	for (int i = 0; i < count; i++)
+	{
+		printf("%s\n", names[i]);
+		free(names[i]);
+	}
+	free(names);
 }
 
 /**
- * main - entry point of the program
- * @argc: number of command-line arguments
- * @argv: array of command-line argument strings
+ * main - Entry point for the "hls" program.
+ * @argc: Number of command-line arguments.
+ * @argv: Array of command-line argument strings.
  *
- * Returns: 0 on success
+ * Description:
+ *   This function serves as the entry point for the "hls" program.
+ *   It lists the content of a specified directory in lexicographical order.
+ *   If no directory is provided,
+ *   it lists the content of the current directory.
+ *
+ * Usage:
+ *   hls [directory_path]
+ *
+ * Return:
+ *   0 on success, EXIT_FAILURE on failure.
  */
 int main(int argc, char *argv[])
 {
-	char *dir_name = ".";
-	int num_entries = 0;
-	char **entries;
+	/* Initialize variables */
+	char **names = NULL;
+	int count = 0;
 
-	if (argc > 1)
-	{
-		dir_name = argv[1];
-	}
+	/* Check if a directory name is provided as a command-line argument */
+	const char *dir_path = (argc > 1) ? argv[1] : ".";
 
-	entries = scan_dir(dir_name, &num_entries);
-	print_and_free_entries(entries, num_entries);
+	/* Read the contents of the specified directory */
+	read_directory(dir_path, &names, &count);
 
+	/* Print the sorted names */
+	print_sorted_names(names, count);
+
+	/* Clean up and exit */
 	return (0);
 }
