@@ -22,7 +22,7 @@ void *_realloc(void *ptr, size_t size)
 
 	if (ptr != NULL)
 	{
-		memcpy(new_ptr, ptr, size);
+		_memcpy(new_ptr, ptr, size);
 		free(ptr);
 	}
 

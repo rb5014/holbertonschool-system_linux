@@ -84,7 +84,7 @@ void print_sorted_names(char **names, int count)
 {
 	int i;
 
-	qsort(names, count, sizeof(char *), compare_names);
+	_qsort(names, count, sizeof(char *), compare_names);
 
 	for (i = 0; i < count; i++)
 	{
