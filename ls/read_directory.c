@@ -17,6 +17,7 @@ int is_dot_entry(const struct dirent *entry)
 			return (1); /* It is "." */
 		if (entry->d_name[1] == '.' && entry->d_name[2] == '\0')
 			return (2); /* It is ".." */
+		return (3); /* it is a hidden file */
 	}
 	return (0); /* It is neither "." nor ".." */
 }
@@ -45,7 +46,7 @@ int count_entries(const char *dir_path)
 
 		if (dotType > 0)
 		{
-			/* Exclude "." and ".." entry */
+			/* Exclude "." and ".." starting entries */
 			continue;
 		}
 
@@ -99,7 +100,7 @@ void populate_names(const char *dir_path, char **names, int *count)
 
 		if (dotType > 0)
 		{
-			/* Exclude "." and ".." entry */
+			/* Exclude "." and ".." starting entries */
 			continue;
 		}
 
