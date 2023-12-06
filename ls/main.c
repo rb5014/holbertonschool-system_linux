@@ -55,7 +55,6 @@ int check_entries(char ***argv)
 void sort_entries(int n_args, char ***argv)
 {
 	_qsort(&argv[1], n_args, sizeof(char *), compare_names);
-
 }
 
 /**
@@ -70,7 +69,7 @@ void process_entries(int n_args, char **argv, bool is_mult_args)
 	int nth_arg;
 	const char *dir_path;
 	int count = 0;
-	struct stat st[n_args];
+	// struct stat st[n_args];
 
 	/* Sort entries alphabetically and by type */
 	sort_entries(n_args, &argv);

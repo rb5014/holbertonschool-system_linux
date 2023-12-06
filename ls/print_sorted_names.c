@@ -14,6 +14,8 @@ void print_sorted_names(char **names, int count,
 {
 	int i;
 
+	_qsort(names, count, sizeof(char *), compare_names);
+
 	if (is_mult_args == true)
 	{
 		printf("%s:\n", dir_path);
