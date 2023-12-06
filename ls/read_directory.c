@@ -132,11 +132,13 @@ int read_directory(const char *path, char ***names,
 	if (dir == NULL)
 	{
 		print_error(path, prog_name);
+		closedir(dir);
 		return (-1);
 	}
 	*count = count_entries(path);
 	*names = allocate_names(*count);
 	populate_names(path, *names, count);
 
+	closedir(dir);
 	return (0);
 }
