@@ -33,7 +33,7 @@ void check_entries(int argc, char **argv)
 		if (is_valid_entry(argv[i]) == false)
 		{
 			/* Invalid entry, print error and skip it */
-			fprintf(stderr, "%s: cannot access '%s': ", argv[0], argv[i]);
+			fprintf(stderr, "%s: cannot access %s: ", argv[0], argv[i]);
 			perror("");
 			argv[i] = NULL;
 		}
