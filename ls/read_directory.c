@@ -121,10 +121,22 @@ void populate_names(const char *path, char **names, int *count)
  * @path: Path to the directory.
  * @names: Pointer to the array of names.
  * @count: Pointer to the count of names.
+ * @prog_name: Name of the programme (argv[0])
+ * Return: 0 if success, -1 otherwise
  */
-void read_directory(const char *path, char ***names, int *count)
+int read_directory(const char *path, char ***names,
+					int *count, const char *prog_name)
 {
+	DIR *dir = opendir(path);
+
+	if (dir == NULL)
+	{
+		print_error(path, prog_name);
+		return (-1);
+	}
 	*count = count_entries(path);
 	*names = allocate_names(*count);
 	populate_names(path, *names, count);
+
+	return (0);
 }

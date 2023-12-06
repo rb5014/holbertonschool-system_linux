@@ -1,5 +1,6 @@
 #include "custom_functions.h"
 
+
 /**
  * is_valid_entry - Check if a file/directory entry is valid.
  * @path: Path of the file/directory entry.
@@ -64,10 +65,10 @@ void process_entries(int argc, char **argv, bool is_mult_args)
 	const char *dir_path;
 	int count = 0;
 	/* int n_entries = argc - 1; */
-	/* struct stat st[argc]; */
+	struct stat st;
 
 	/* Sort entries alphabetically and by type */
-	/* sort_entries(n_entries, &argv); */
+	/* sort_entries(argc, &argv); */
 	for (i = 1; i < argc; i++)
 	{
 		if (argv[i] == NULL)
@@ -81,11 +82,18 @@ void process_entries(int argc, char **argv, bool is_mult_args)
 
 		dir_path = argv[i];
 
-		/* Read the contents of the specified directory */
-		read_directory(dir_path, &names, &count);
+		lstat(argv[i], &st);
+		if (S_ISREG(st.st_mode))
+			printf("%s\n", argv[i]);
+		else if (S_ISDIR(st.st_mode))
+		{
+			/* Read the contents of the specified directory */
+			if (read_directory(dir_path, &names, &count, argv[0]) == -1)
+				continue;
 
-		/* Print the sorted names */
-		print_sorted_names(names, count, dir_path, is_mult_args);
+			/* Print the sorted names */
+			print_dir_content(names, count, dir_path, is_mult_args);
+		}
 	}
 }
 
