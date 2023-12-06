@@ -8,43 +8,44 @@
  */
 bool is_valid_entry(const char *path)
 {
-    struct stat st;
+	struct stat st;
 
-    // Check if the directory entry is valid
-    if (lstat(path, &st) == -1) {
-        return (false);  // Failed to stat, it is invalid
-    }
+	/* Check if the directory entry is valid */
+	if (lstat(path, &st) == -1)
+		return (false);  /* Failed to stat, it is invalid */
 
-    return (true);
+	return (true);
 }
 
 /**
  * check_entries - Check and modify argv entries.
  * @argv: Pointer to the array of command-line arguments.
+ * Return: the number of arguments that are valids
  */
 int check_entries(char ***argv)
 {
-    int src, dest;
+	int src, dest;
 
-    // Iterate over argv, removing invalid entries
-    for (src = 1, dest = 1; (*argv)[src] != NULL; src++)
+	/* Iterate over argv, removing invalid entries */
+	for (src = 1, dest = 1; (*argv)[src] != NULL; src++)
 	{
-        if (is_valid_entry((*argv)[src]))
+		if (is_valid_entry((*argv)[src]))
 		{
-            // Keep valid entry
-            (*argv)[dest++] = (*argv)[src];
-        } else {
-            // Invalid entry, print error and skip it
-            fprintf(stderr, "%s: cannot access '%s': ", (*argv)[0], (*argv)[src]);
+			/* Keep valid entry */
+			(*argv)[dest++] = (*argv)[src];
+		} else
+		{
+			/* Invalid entry, print error and skip it */
+			fprintf(stderr, "%s: cannot access '%s': ", (*argv)[0], (*argv)[src]);
 			perror("");
-        }
-    }
+		}
+	}
 
-    // Terminate the modified argv
-    (*argv)[dest] = NULL;
-	
-	/* Return the new number of arguments validated, minus the name of the program */
-	return (dest -1);
+	/* Terminate the modified argv */
+	(*argv)[dest] = NULL;
+
+	/* Return the number of arguments validated, - the name of the program */
+	return (dest - 1);
 }
 
 /**
@@ -69,7 +70,7 @@ void process_entries(int n_args, char **argv, bool is_mult_args)
 	int nth_arg;
 	const char *dir_path;
 	int count = 0;
-	// struct stat st[n_args];
+	/* struct stat st[n_args]; */
 
 	/* Sort entries alphabetically and by type */
 	sort_entries(n_args, &argv);
@@ -119,7 +120,7 @@ int main(int argc, char *argv[])
 		is_mult_args = true;
 	}
 
-	/* Check if entry is valid, and print errors if not, also removing them from argv */
+	/* Check entries validity, remove invalids and print error */
 	check_entries(&argv);
 
 	/* Reorganize entries and print their content (or names for files) */
