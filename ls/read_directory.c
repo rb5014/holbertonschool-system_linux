@@ -34,20 +34,22 @@ int count_entries(const char *path)
 	if (dir == NULL)
 	{
 		perror("Error opening directory");
-		exit(EXIT_FAILURE);
 	}
-
-	while ((entry = readdir(dir)) != NULL)
+	else
 	{
-		int dotType = is_dot_entry(entry);
-
-		if (dotType > 0)
+		while ((entry = readdir(dir)) != NULL)
 		{
-			/* Exclude "." and ".." starting entries */
-			continue;
+			int dotType = is_dot_entry(entry);
+
+			if (dotType > 0)
+			{
+				/* Exclude "." and ".." starting entries */
+				continue;
+			}
+
+			count++;
 		}
 
-		count++;
 	}
 
 	closedir(dir);
