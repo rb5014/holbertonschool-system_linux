@@ -26,6 +26,6 @@ void print_sorted_names(char **names, int count,
 		printf("%s  ", names[i]);
 		free(names[i]);
 	}
-	free(names);
 	printf("\n");
+	free(names);
 }

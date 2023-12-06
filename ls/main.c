@@ -12,71 +12,74 @@ bool is_valid_entry(const char *path)
 
 	/* Check if the directory entry is valid */
 	if (lstat(path, &st) == -1)
+	{
 		return (false);  /* Failed to stat, it is invalid */
-
+	}
 	return (true);
 }
 
 /**
  * check_entries - Check and modify argv entries.
- * @argv: Pointer to the array of command-line arguments.
- * Return: the number of arguments that are valids
+ * @argc: Number of command-line arguments
+ * @argv: Array of command-line arguments.
  */
-int check_entries(char ***argv)
+void check_entries(int argc, char **argv)
 {
-	int src, dest;
+	int i;
 
 	/* Iterate over argv, removing invalid entries */
-	for (src = 1, dest = 1; (*argv)[src] != NULL; src++)
+	for (i = 1; i < argc; i++)
 	{
-		if (is_valid_entry((*argv)[src]))
-		{
-			/* Keep valid entry */
-			(*argv)[dest++] = (*argv)[src];
-		} else
+		if (is_valid_entry(argv[i]) == false)
 		{
 			/* Invalid entry, print error and skip it */
-			fprintf(stderr, "%s: cannot access '%s': ", (*argv)[0], (*argv)[src]);
+			fprintf(stderr, "%s: cannot access '%s': ", argv[0], argv[i]);
 			perror("");
+			argv[i] = NULL;
 		}
 	}
 
-	/* Terminate the modified argv */
-	(*argv)[dest] = NULL;
-
-	/* Return the number of arguments validated, - the name of the program */
-	return (dest - 1);
 }
 
 /**
  * sort_entries - Sort argv entries.
- * @n_args: Number of command-line arguments validated.
+ * @n_entries: Number of entries.
  * @argv: Pointer to the array of command-line arguments.
  */
-void sort_entries(int n_args, char ***argv)
+void sort_entries(int n_entries, char ***argv)
 {
-	_qsort(&argv[1], n_args, sizeof(char *), compare_names);
+	_qsort(&argv[1], n_entries, sizeof(char *), compare_types);
 }
 
 /**
- * process_entries - Execute the actual operations based on validated entries
- * @n_args: Number of command-line arguments validated.
+ * process_entries - Execute the actual operations based on entries
+ * @argc: Number of command-line arguments.
  * @argv: Pointer to the array of command-line arguments.
  * @is_mult_args: Boolean stating if there are multiple arguments or not
  */
-void process_entries(int n_args, char **argv, bool is_mult_args)
+void process_entries(int argc, char **argv, bool is_mult_args)
 {
 	char **names = NULL;
-	int nth_arg;
+	int i;
 	const char *dir_path;
 	int count = 0;
-	/* struct stat st[n_args]; */
+	/* int n_entries = argc - 1; */
+	/* struct stat st[argc]; */
 
 	/* Sort entries alphabetically and by type */
-	sort_entries(n_args, &argv);
-	for (nth_arg = 1; argv[nth_arg] != NULL; nth_arg++)
+	/* sort_entries(n_entries, &argv); */
+	for (i = 1; i < argc; i++)
 	{
-		dir_path = argv[nth_arg];
+		if (argv[i] == NULL)
+		{
+			continue;
+		}
+		if (i > 1)
+		{
+			printf("\n");
+		}
+
+		dir_path = argv[i];
 
 		/* Read the contents of the specified directory */
 		read_directory(dir_path, &names, &count);
@@ -111,8 +114,7 @@ int main(int argc, char *argv[])
 	if (argc <= 1)
 	{
 		argv[1] = ".";
-		/* argv[2] would be SHELL=/bin/bash in that case */
-		argv[2] = NULL;
+		argc++;
 	}
 	/* Check if there are multiple file/directory names provided */
 	else if (argc > 2)
@@ -121,7 +123,7 @@ int main(int argc, char *argv[])
 	}
 
 	/* Check entries validity, remove invalids and print error */
-	check_entries(&argv);
+	check_entries(argc, argv);
 
 	/* Reorganize entries and print their content (or names for files) */
 	process_entries(argc, argv, is_mult_args);

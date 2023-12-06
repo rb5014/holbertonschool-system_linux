@@ -16,14 +16,16 @@ typedef int bool;
 
 /* Define the comparison function type */
 typedef int (*cmp_func)(const void*, const void*);
-int check_entries(char ***argv);
+void check_entries(int argc, char **argv);
 void process_entries(int n_args, char **argv, bool is_mult_dirs);
 void sort_entries(int n_args, char ***argv);
 void read_directory(const char *path, char ***names, int *count);
 void print_sorted_names(char **names, int count,
 						const char *path, bool is_mult_dirs);
 int compare_names(const void *a, const void *b);
+int compare_types(const void *a, const void *b);
 int _strcmp_icase(const char *a, const char *b);
+int _strcmp(const char *s1, const char *s2);
 void *_realloc(void *ptr, size_t size);
 char *_strcpy(char *dest, const char *src);
 size_t _strlen(const char *str);
