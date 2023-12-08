@@ -15,7 +15,7 @@ typedef int bool;
 #define true 1
 #define false 0
 
-
+/*** STRUCTURES ***/
 /**
  * struct FileArg - Structure holding the argument name and numerous
  * informations stored in strut stat member
@@ -47,5 +47,47 @@ typedef struct Options
 	bool almost_all; /* A */
 	bool long_listing_format; /* l */
 } Options;
+/******************/
+void update_options(char *prog_name, char *arg, Options *options);
+
+/*** TOOLS ***/
+void *_memcpy(void *dest, const void *src, size_t n);
+char *_strcpy(char *dest, const char *src);
+size_t _strlen(const char *str);
+/*************/
+
+/*** PARSE ***/
+void parse_args(int argc, char *argv[],
+				Options *options,
+				FileArg **reg_array,
+				FileArg **dir_array,
+				int *nb_reg,
+				int *nb_dir);
+void parse_path(char *prog_name, char *path,
+				FileArg **reg_array,
+				FileArg **dir_array,
+				int *nb_reg,
+				int *nb_dir);
+FileArg *update_array(FileArg file, FileArg **file_array, int nb_elem);
+/*************/
+
+/*** STORE ***/
+void store_file(FileArg **array, FileArg *file, int *nb);
+void store_dir(char *prog_name, char *path, FileArg **dir_array,
+			   FileArg *dir_file, int *nb);
+/*************/
+
+/*** PRINT ***/
+void print_files(FileArg *reg_array, int nb_reg, Options options);
+void print_directories(FileArg *dir_array, int nb_dir, Options options);
+/*************/
+
+
+/*** FREE  ***/
+void free_files(FileArg **array, int nb);
+void free_dirs(FileArg **dir_array, int nb_dir);
+void free_all(FileArg **reg_array, FileArg **dir_array,
+			  int nb_reg, int nb_dir);
+/*************/
 
 #endif /* MAIN_H */
