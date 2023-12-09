@@ -3,9 +3,9 @@
  * print_owner - Print the name of the owner of the file/dir
  * @st_uid: User name id
 */
-void print_owner(uid_t st_uid)
+void print_owner(uid_t *st_uid)
 {
-	struct passwd *usr = getpwuid(st_uid);
+	struct passwd *usr = getpwuid(*st_uid);
 
 	if (usr != NULL)
 		printf("%s ", usr->pw_name);
@@ -17,9 +17,9 @@ void print_owner(uid_t st_uid)
  * print_group - Print the name of the group of the file/dir
  * @st_gid: Group name id
 */
-void print_group(uid_t st_gid)
+void print_group(uid_t *st_gid)
 {
-	struct group *grp = getgrgid(st_gid);
+	struct group *grp = getgrgid(*st_gid);
 
 	if (grp != NULL)
 		printf("%s ", grp->gr_name);
@@ -85,9 +85,9 @@ void print_long_listing_format(FileArg *file_array, int nb)
 
 		printf("%li ", file_array[i].st.st_nlink);
 
-		print_owner(file_array[i].st.st_uid);
+		print_owner(&(file_array[i].st.st_uid));
 
-		print_group(file_array[i].st.st_gid);
+		print_group(&(file_array[i].st.st_gid));
 
 		printf("%li ", file_array[i].st.st_size);
 
