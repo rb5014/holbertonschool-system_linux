@@ -7,7 +7,8 @@ void print_owner(uid_t st_uid)
 {
 	struct passwd *usr = getpwuid(st_uid);
 
-	printf("%s ", usr->pw_name);
+	if (usr != NULL)
+		printf("%s ", usr->pw_name);
 }
 
 /**
@@ -18,7 +19,8 @@ void print_group(uid_t st_gid)
 {
 	struct group *grp = getgrgid(st_gid);
 
-	printf("%s ", grp->gr_name);
+	if (grp != NULL)
+		printf("%s ", grp->gr_name);
 
 }
 
