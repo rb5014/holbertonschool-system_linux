@@ -1,18 +1,4 @@
 #include "main.h"
-/**
- * print_long_listing_format - print files in long listing format
- * @file_array: array of files to print
- * @nb: nb of elements in the array
-*/
-void print_long_listing_format(FileArg *file_array, int nb)
-{
-	int i;
-
-	for (i = 0; i < nb; i++)
-	{
-		printf("%s\n", file_array[i].name);
-	}
-}
 
 /**
  * print_one_by_line - print files one by line

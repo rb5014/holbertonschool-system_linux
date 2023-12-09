@@ -9,6 +9,9 @@
 #include <sys/stat.h>
 #include <unistd.h>
 #include <errno.h>
+#include <pwd.h>
+#include <time.h>
+#include <grp.h>
 
 /* Define the boolean type*/
 typedef int bool;
@@ -97,6 +100,8 @@ void print_directories(FileArg *dir_array, int nb_dir,
 void print_no_opt(FileArg *file_array, int nb);
 void print_one_by_line(FileArg *file_array, int nb);
 void print_long_listing_format(FileArg *file_array, int nb);
+void print_permissions(mode_t st_mode);
+void print_time(char *time);
 /*************/
 
 
