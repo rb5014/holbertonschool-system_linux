@@ -11,7 +11,7 @@ void print_owner(uid_t st_uid)
 		printf("%s ", usr->pw_name);
 	else
 	{
-		printf("err: %i", errno);
+		printf("%i", st_uid);
 		printf("null");
 	}
 
@@ -29,7 +29,7 @@ void print_group(uid_t st_gid)
 		printf("%s ", grp->gr_name);
 	else
 	{
-		printf("err: %i", errno);
+		printf("%i", st_gid);
 		printf("null");
 	}
 
