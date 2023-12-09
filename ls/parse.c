@@ -24,6 +24,10 @@ void parse_path(char *prog_name, char *path,
 
 	st.st_mode = 0;
 
+	/* Will activate the multiple dir printing format even if file invalid */
+	if ((*nb_dir == 1) && (*mult_dirs == false))
+		*mult_dirs = true;
+
 	if (lstat(path, &st) == -1)
 	{
 		/* Invalid path, print error*/
@@ -45,8 +49,6 @@ void parse_path(char *prog_name, char *path,
 	}
 	else if (S_ISDIR(st.st_mode))
 	{
-		if ((*nb_dir > 1) && (*mult_dirs == false))
-			*mult_dirs = true;
 		store_dir_struct(prog_name, path, dir_array, &file, nb_dir, options);
 	}
 }
