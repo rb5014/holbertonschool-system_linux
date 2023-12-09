@@ -90,6 +90,8 @@ void parse_args(int argc, char *argv[],
 
 	for (i = 1; i < argc; i++)
 	{
+		if (argv[i][0] == '-')
+			continue;
 		parse_path(prog_name, argv[i], reg_array, dir_array, nb_reg, nb_dir,
 				   options, &invalid_file_found);
 	}
