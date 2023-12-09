@@ -45,20 +45,20 @@ void read_entries(char *prog_name, DIR *dir, char *dir_path,
 {
 	struct dirent *entry = NULL;
 	struct stat st;
-
+	char *full_path = NULL;
 	while ((entry = readdir(dir)) != NULL)
 	{
 		FileArg element;
-		char *full_path = malloc(sizeof(char) * (_strlen(dir_path) +
-												 _strlen(entry->d_name) + 1 + 1));
-		sprintf(full_path, "%s/%s", dir_path, entry->d_name);
 
-		if (lstat(full_path, &st) == -1)
+		full_path = malloc(sizeof(char) * (_strlen(dir_path) +
+										   _strlen(entry->d_name) + 1 + 1));
+		sprintf(full_path, "%s/%s", dir_path, entry->d_name);
+		if (lstat((const char *)full_path, &st) == -1)
 		{
+			free(full_path);
 			/* Invalid path, print error */
 			fprintf(stderr, "%s: cannot access %s: ", prog_name, entry->d_name);
 			perror("");
-			free(full_path);
 			return;
 		}
 
@@ -66,16 +66,19 @@ void read_entries(char *prog_name, DIR *dir, char *dir_path,
 		    (_strcmp("..", entry->d_name) == 0))
 		{
 			if (options->all == false)
+			{
+				free(full_path);
 				continue;
-
+			}
 		} else if ((entry->d_name[0] == '.') && (options->all == false) &&
 				   (options->almost_all == false))
+		{
+			free(full_path);
 			continue;
-
+		}
 		element.name = malloc(sizeof(char) * (_strlen(entry->d_name) + 1));
 		_strcpy(element.name, entry->d_name);
 		element.st = st;
-
 		store_struct(&(*dir_arg).elements, &element, &(*dir_arg).nb_elem);
 		free(full_path);
 	}
