@@ -9,7 +9,7 @@
  * @nb_reg: number of files currently in reg_array array of struct
  * @nb_dir: number of directories currently in dir_array array of struct
  * @options: Options struct
- * @mult_dirs: If true, then more than one dir is present in the arguments
+ * @invalid_file_found: If true, then the file is invalid
 */
 void parse_path(char *prog_name, char *path,
 				FileArg **reg_array,
@@ -17,22 +17,19 @@ void parse_path(char *prog_name, char *path,
 				int *nb_reg,
 				int *nb_dir,
 				Options *options,
-				bool *mult_dirs)
+				bool *invalid_file_found)
 {
 	struct stat st;
 	FileArg file;
 
 	st.st_mode = 0;
 
-	/* Will activate the multiple dir printing format even if file invalid */
-	if ((*nb_dir == 1) && (*mult_dirs == false))
-		*mult_dirs = true;
-
 	if (lstat(path, &st) == -1)
 	{
 		/* Invalid path, print error*/
 		fprintf(stderr, "%s: cannot access %s: ", prog_name, path);
 		perror("");
+		*invalid_file_found = true;
 		return;
 	}
 
@@ -75,6 +72,7 @@ void parse_args(int argc, char *argv[],
 {
 	int i;
 	char *prog_name = argv[0];
+	bool invalid_file_found = false;
 
 	if (argc == 1)
 	{
@@ -93,6 +91,9 @@ void parse_args(int argc, char *argv[],
 	for (i = 1; i < argc; i++)
 	{
 		parse_path(prog_name, argv[i], reg_array, dir_array, nb_reg, nb_dir,
-				   options, mult_dirs);
+				   options, &invalid_file_found);
 	}
+
+	if ((*nb_dir > 1) || ((*nb_dir == 1) && (invalid_file_found == true)))
+		*mult_dirs = true;
 }

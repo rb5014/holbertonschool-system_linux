@@ -72,7 +72,7 @@ void parse_path(char *prog_name, char *path,
 				int *nb_reg,
 				int *nb_dir,
 				Options *options,
-				bool *mult_dirs);
+				bool *invalid_file_found);
 /*************/
 
 /*** STORE ***/
