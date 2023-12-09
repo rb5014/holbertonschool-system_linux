@@ -18,6 +18,7 @@ void parse_path(char *prog_name, char *path,
 				Options *options)
 {
 	struct stat st;
+	FileArg file;
 
 	st.st_mode = 0;
 
@@ -29,7 +30,6 @@ void parse_path(char *prog_name, char *path,
 		return;
 	}
 
-	FileArg file;
 
 	file.name = malloc(sizeof(char) * (_strlen(path) + 1));
 	_strcpy(file.name, path);
