@@ -1,7 +1,30 @@
 #include "main.h"
 /**
- * print_time - print the time in a right format
- * @time: time represented as a string
+ * print_owner - Print the name of the owner of the file/dir
+ * @st_uid: User name id
+*/
+void print_owner(uid_t st_uid)
+{
+	struct passwd *usr = getpwuid(st_uid);
+
+	printf("%s ", usr->pw_name);
+}
+
+/**
+ * print_group - Print the name of the group of the file/dir
+ * @st_gid: Group name id
+*/
+void print_group(uid_t st_gid)
+{
+	struct group *grp = getgrgid(st_gid);
+
+	printf("%s ", grp->gr_name);
+
+}
+
+/**
+ * print_time - Print the time in a right format
+ * @time: Time represented as a string
 */
 void print_time(char *time)
 {
@@ -14,8 +37,8 @@ void print_time(char *time)
 
 
 /**
- * print_permissions - print the permissions of the current file
- * @st_mode: mode associated to the struct stat st member of the FileArg
+ * print_permissions - Print the permissions of the current file
+ * @st_mode: Mode associated to the struct stat st member of the FileArg
 */
 void print_permissions(mode_t st_mode)
 {
@@ -37,9 +60,9 @@ void print_permissions(mode_t st_mode)
 }
 
 /**
- * print_long_listing_format - print files in long listing format
- * @file_array: array of files to print
- * @nb: nb of elements in the array
+ * print_long_listing_format - Print files in long listing format
+ * @file_array: Array of files to print
+ * @nb: Nb of elements in the array
 */
 void print_long_listing_format(FileArg *file_array, int nb)
 {
@@ -51,10 +74,17 @@ void print_long_listing_format(FileArg *file_array, int nb)
 			printf("d");
 		else
 			printf("-");
+
 		print_permissions(file_array[i].st.st_mode);
+
 		printf("%li ", file_array[i].st.st_nlink);
 
+		print_owner(file_array[i].st.st_uid);
+
+		print_group(file_array[i].st.st_gid);
+
 		printf("%li ", file_array[i].st.st_size);
+
 		print_time(ctime(&(file_array[i].st.st_mtime)));
 
 		printf("%s\n", file_array[i].name);
