@@ -58,6 +58,7 @@ void read_entries(char *prog_name, DIR *dir, char *dir_path,
 			/* Invalid path, print error */
 			fprintf(stderr, "%s: cannot access %s: ", prog_name, entry->d_name);
 			perror("");
+			free(full_path);
 			return;
 		}
 
@@ -76,7 +77,7 @@ void read_entries(char *prog_name, DIR *dir, char *dir_path,
 		element.st = st;
 
 		store_struct(&(*dir_arg).elements, &element, &(*dir_arg).nb_elem);
-
+		free(full_path);
 	}
 }
 
