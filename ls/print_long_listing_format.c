@@ -51,6 +51,7 @@ void print_long_listing_format(FileArg *file_array, int nb)
 			printf("d");
 		else
 			printf("-");
+		print_permissions(file_array[i].st.st_mode);
 
 
 		printf("%s\n", file_array[i].name);
