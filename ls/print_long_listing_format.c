@@ -47,6 +47,11 @@ void print_long_listing_format(FileArg *file_array, int nb)
 
 	for (i = 0; i < nb; i++)
 	{
+		if (S_ISDIR(file_array[i].st.st_mode))
+			printf("d");
+		else
+			printf("-");
+
 
 		printf("%s\n", file_array[i].name);
 	}
