@@ -102,8 +102,8 @@ void print_one_by_line(FileArg *file_array, int nb);
 void print_long_listing_format(FileArg *file_array, int nb);
 void print_permissions(mode_t st_mode);
 void print_time(char *time);
-void print_owner(uid_t *st_uid);
-void print_group(uid_t *st_gid);
+void print_owner(uid_t st_uid);
+void print_group(uid_t st_gid);
 /*************/
 
 
