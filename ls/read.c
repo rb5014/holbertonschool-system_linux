@@ -27,13 +27,13 @@ void read_entries(char *prog_name, DIR *dir,
 				  FileArg *dir_arg, Options *options)
 {
 	struct dirent *entry = NULL;
-	struct stat st;
+	struct stat *st = malloc(sizeof(struct stat));
 
 	while ((entry = readdir(dir)) != NULL)
 	{
 		FileArg element;
 
-		if (lstat(entry->d_name, &st) == 1)
+		if (lstat(entry->d_name, st) == 1)
 		{
 			/* Invalid path, print error */
 			fprintf(stderr, "%s: cannot access %s: ", prog_name, entry->d_name);
@@ -53,11 +53,12 @@ void read_entries(char *prog_name, DIR *dir,
 
 		element.name = malloc(sizeof(char) * (_strlen(entry->d_name) + 1));
 		_strcpy(element.name, entry->d_name);
-		element.st = st;
+		element.st = *st;
 
 		store_struct(&(*dir_arg).elements, &element, &(*dir_arg).nb_elem);
 
 	}
+	free(st);
 }
 
 void read_directory(char *prog_name, char *path,
