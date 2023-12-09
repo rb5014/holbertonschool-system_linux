@@ -9,7 +9,7 @@ DIR *init_dir(char *prog_name, char *path, char *dir_name)
 	{
 		if (errno == EACCES)
 		{
-			fprintf(stderr, "%s: cannot open directory %s", prog_name, path);
+			fprintf(stderr, "%s: cannot open directory '%s': ", prog_name, path);
 			perror("");
 		}
 		else
