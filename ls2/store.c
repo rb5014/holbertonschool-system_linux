@@ -1,62 +1,59 @@
 #include "main.h"
 
 /**
- * store_file - Store file info in a FileArg struct and add it to array
+ * update_array - Ann a new element to one of the arrays of structs FileArg
+ * @file: file arg to add to the array
+ * @file_array: array to be updated
+ * @nb_elem: number of elements in the array
+ * Return: A newly updated array cotaning the old elements + the new one
+*/
+FileArg *update_array(FileArg file, FileArg **file_array, int nb_elem)
+{
+	FileArg *new_array = malloc(sizeof(FileArg) * nb_elem);
+
+	if (new_array == NULL)
+	{
+	/* Allocation failed, return the original pointer */
+		return (NULL);
+	}
+	if (*file_array != NULL)
+	{
+		_memcpy(new_array, *file_array, sizeof(FileArg) * (nb_elem - 1));
+		free(*file_array);
+	}
+	new_array[nb_elem - 1] = file;
+
+	return (new_array);
+}
+
+/**
+ * store_struct - Store FileArg struct and add it to array
  * @array: Array to update
  * @file: File to add to array
  * @nb: Number of elements in array (old)
 */
-void store_file(FileArg **array, FileArg *file, int *nb)
+void store_struct(FileArg **array, FileArg *file, int *nb)
 {
 	(*nb)++;
 	*array = update_array(*file, array, *nb);
 }
 
 /**
- * store_dir - Store dir info in a FileArg struct and add it to dir_array
+ * store_dir_struct - Store dir info in a FileArg struct
+ * and add it to dir_array
  * @prog_name: Name of the program
  * @path: path of the dir to read and add
  * @dir_array: Array to update
- * @dir_file: Dir to add to array
+ * @dir_arg: Dir to add to array
  * @nb: Number of elements in array (old)
+ * @options: Options struct
 */
-void store_dir(char *prog_name, char *path, FileArg **dir_array,
-			   FileArg *dir_file, int *nb)
+void store_dir_struct(char *prog_name, char *path, FileArg **dir_array,
+			   FileArg *dir_arg, int *nb, Options *options)
 {
-	DIR *dir;
-	struct dirent *entry = NULL;
-	struct stat st;
-
-	dir = opendir(path);
-	if (dir == NULL)
-	{
-		perror("Error opening directory");
-		closedir(dir);
-		free((*dir_file).name);
-		exit(EXIT_FAILURE);
-	}
-
-	while ((entry = readdir(dir)) != NULL)
-	{
-		(*dir_file).nb_elem++;
-		FileArg element;
-
-		if (lstat(entry->d_name, &st) == 1)
-		{
-			/* Invalid path, print error*/
-			fprintf(stderr, "%s: cannot access %s: ", prog_name, entry->d_name);
-			perror("");
-			return;
-		}
-		element.name = malloc(sizeof(char) * (_strlen(entry->d_name) + 1));
-		_strcpy(element.name, entry->d_name);
-		element.st = st;
-		(*dir_file).elements = update_array(element, &(*dir_file).elements,
-										    (*dir_file).nb_elem);
-	}
+	read_directory(prog_name, path, dir_arg, options);
 
 	(*nb)++;
-	*dir_array = update_array(*dir_file, dir_array, (*nb));
+	*dir_array = update_array(*dir_arg, dir_array, (*nb));
 
-	closedir(dir);
 }

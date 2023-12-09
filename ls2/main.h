@@ -52,6 +52,7 @@ void update_options(char *prog_name, char *arg, Options *options);
 
 /*** TOOLS ***/
 void *_memcpy(void *dest, const void *src, size_t n);
+int _strcmp(const char *s1, const char *s2);
 char *_strcpy(char *dest, const char *src);
 size_t _strlen(const char *str);
 /*************/
@@ -67,15 +68,24 @@ void parse_path(char *prog_name, char *path,
 				FileArg **reg_array,
 				FileArg **dir_array,
 				int *nb_reg,
-				int *nb_dir);
-FileArg *update_array(FileArg file, FileArg **file_array, int nb_elem);
+				int *nb_dir,
+				Options *options);
 /*************/
 
 /*** STORE ***/
-void store_file(FileArg **array, FileArg *file, int *nb);
-void store_dir(char *prog_name, char *path, FileArg **dir_array,
-			   FileArg *dir_file, int *nb);
+FileArg *update_array(FileArg file, FileArg **file_array, int nb_elem);
+void store_struct(FileArg **array, FileArg *file, int *nb);
+void store_dir_struct(char *prog_name, char *path, FileArg **dir_array,
+			   FileArg *dir_file, int *nb, Options *options);
 /*************/
+
+/*** READ ***/
+void read_directory(char *prog_name, char *path,
+			FileArg *dir_arg, Options *options);
+void read_entries(char *prog_name, DIR *dir,
+				  FileArg *dir_arg, Options *options);
+DIR *init_dir(char *path, char *dir_name);
+/************/
 
 /*** PRINT ***/
 void print_files(FileArg *reg_array, int nb_reg, Options options);

@@ -1,34 +1,6 @@
 #include "main.h"
 
 /**
- * update_array - Ann a new element to one of the arrays of structs FileArg
- * @file: file arg to add to the array
- * @file_array: array to be updated
- * @nb_elem: number of elements in the array
- * Return: A newly updated array cotaning the old elements + the new one
-*/
-FileArg *update_array(FileArg file, FileArg **file_array, int nb_elem)
-{
-	FileArg *new_array = malloc(sizeof(FileArg) * nb_elem);
-
-	if (new_array == NULL)
-	{
-	/* Allocation failed, return the original pointer */
-		return (NULL);
-	}
-	if (*file_array != NULL)
-	{
-		_memcpy(new_array, *file_array, sizeof(FileArg) * (nb_elem - 1));
-		free(*file_array);
-	}
-	new_array[nb_elem - 1] = file;
-
-	return (new_array);
-}
-
-
-
-/**
  * parse_path - Parse the args accordingly to their type and validity
  * @prog_name: Name of the program
  * @path: Path to the file or directory
@@ -36,12 +8,14 @@ FileArg *update_array(FileArg file, FileArg **file_array, int nb_elem)
  * @dir_array: Pointer to FileArg structs pointer for directories.
  * @nb_reg: number of files currently in reg_array array of struct
  * @nb_dir: number of directories currently in dir_array array of struct
+ * @options: Options struct
 */
 void parse_path(char *prog_name, char *path,
 				FileArg **reg_array,
 				FileArg **dir_array,
 				int *nb_reg,
-				int *nb_dir)
+				int *nb_dir,
+				Options *options)
 {
 	struct stat st;
 
@@ -65,11 +39,11 @@ void parse_path(char *prog_name, char *path,
 
 	if (S_ISREG(st.st_mode))
 	{
-		store_file(reg_array, &file, nb_reg);
+		store_struct(reg_array, &file, nb_reg);
 	}
 	else if (S_ISDIR(st.st_mode))
 	{
-		store_dir(prog_name, path, dir_array, &file, nb_dir);
+		store_dir_struct(prog_name, path, dir_array, &file, nb_dir, options);
 	}
 }
 
@@ -106,9 +80,11 @@ void parse_args(int argc, char *argv[],
 		if (argv[i][0] == '-')
 			/* Update options struct */
 			update_options(prog_name, &argv[i][1], options);
-		else
-		{
-			parse_path(prog_name, argv[i], reg_array, dir_array, nb_reg, nb_dir);
-		}
+	}
+
+	for (i = 1; i < argc; i++)
+	{
+		parse_path(prog_name, argv[i], reg_array, dir_array, nb_reg, nb_dir,
+				   options);
 	}
 }
