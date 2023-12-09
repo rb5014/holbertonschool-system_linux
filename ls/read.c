@@ -33,7 +33,7 @@ void read_entries(char *prog_name, DIR *dir,
 	{
 		FileArg element;
 
-		if (lstat(entry->d_name, st) == 1)
+		if (lstat(entry->d_name, st) == -1)
 		{
 			/* Invalid path, print error */
 			fprintf(stderr, "%s: cannot access %s: ", prog_name, entry->d_name);
