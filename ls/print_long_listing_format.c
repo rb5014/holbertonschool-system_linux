@@ -36,7 +36,7 @@ void print_time(char *time)
 {
 	unsigned long int i;
 
-	for (i = 0; i < (_strlen(time) - 1); i++)
+	for (i = 4; i < (_strlen(time) - 1 - 8); i++)
 		printf("%c", time[i]);
 	printf(" ");
 }
