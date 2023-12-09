@@ -73,24 +73,19 @@ void print_files(FileArg *file_array, int nb, Options options)
  * @nb_reg: Number of elements in reg_array, to know if we have to add
  * a newline between the two arrays
  * @options: Options struct containing the printing options
+ * @mult_dirs: If true, then more than one dir is present in the arguments
 */
 void print_directories(FileArg *dir_array, int nb_dir,
-					   int nb_reg, Options options)
+					   int nb_reg, Options options, bool mult_dirs)
 {
-	if (nb_dir == 1)
-	{
-		print_files(dir_array[0].elements, dir_array[0].nb_elem, options);
-	}
-	else
-	{
-		int i;
+	int i;
 
-		for (i = 0; i < nb_dir; i++)
-		{
-			if ((i > 0) || (nb_reg > 0))
-				printf("\n");
+	for (i = 0; i < nb_dir; i++)
+	{
+		if ((i > 0) || (nb_reg > 0))
+			printf("\n");
+		if (mult_dirs == true)
 			printf("%s:\n", dir_array[i].name);
-			print_files(dir_array[i].elements, dir_array[i].nb_elem, options);
-		}
+		print_files(dir_array[i].elements, dir_array[i].nb_elem, options);
 	}
 }

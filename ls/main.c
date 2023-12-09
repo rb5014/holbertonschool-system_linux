@@ -65,6 +65,7 @@ int main(int argc, char *argv[])
 	FileArg *dir_array = NULL;
 	int nb_reg = 0;
 	int nb_dir = 0;
+	bool mult_dirs = false;
 
 	/* Options structure defined in "main.h" */
 	Options options;
@@ -74,13 +75,14 @@ int main(int argc, char *argv[])
 	options.almost_all = false;
 	options.long_listing_format = false;
 
-	parse_args(argc, argv, &options, &reg_array, &dir_array, &nb_reg, &nb_dir);
+	parse_args(argc, argv, &options, &reg_array, &dir_array,
+			   &nb_reg, &nb_dir, &mult_dirs);
 
 	if (nb_reg > 0)
 		print_files(reg_array, nb_reg, options);
 
 	if (nb_dir > 0)
-		print_directories(dir_array, nb_dir, nb_reg, options);
+		print_directories(dir_array, nb_dir, nb_reg, options, mult_dirs);
 
 	free_all(&reg_array, &dir_array, nb_reg, nb_dir);
 

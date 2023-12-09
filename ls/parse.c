@@ -9,13 +9,15 @@
  * @nb_reg: number of files currently in reg_array array of struct
  * @nb_dir: number of directories currently in dir_array array of struct
  * @options: Options struct
+ * @mult_dirs: If true, then more than one dir is present in the arguments
 */
 void parse_path(char *prog_name, char *path,
 				FileArg **reg_array,
 				FileArg **dir_array,
 				int *nb_reg,
 				int *nb_dir,
-				Options *options)
+				Options *options,
+				bool *mult_dirs)
 {
 	struct stat st;
 	FileArg file;
@@ -43,6 +45,8 @@ void parse_path(char *prog_name, char *path,
 	}
 	else if (S_ISDIR(st.st_mode))
 	{
+		if ((*nb_dir > 1) && (*mult_dirs == false))
+			*mult_dirs = true;
 		store_dir_struct(prog_name, path, dir_array, &file, nb_dir, options);
 	}
 }
@@ -57,13 +61,15 @@ void parse_path(char *prog_name, char *path,
  * @dir_array: Pointer to FileArg structs pointer for directories
  * @nb_reg: Number of elements in reg_array
  * @nb_dir: Number of elements in dir_array
+ * @mult_dirs: If true, then more than one dir is present in the arguments
 */
 void parse_args(int argc, char *argv[],
 				Options *options,
 				FileArg **reg_array,
 				FileArg **dir_array,
 				int *nb_reg,
-				int *nb_dir)
+				int *nb_dir,
+				bool *mult_dirs)
 {
 	int i;
 	char *prog_name = argv[0];
@@ -85,6 +91,6 @@ void parse_args(int argc, char *argv[],
 	for (i = 1; i < argc; i++)
 	{
 		parse_path(prog_name, argv[i], reg_array, dir_array, nb_reg, nb_dir,
-				   options);
+				   options, mult_dirs);
 	}
 }

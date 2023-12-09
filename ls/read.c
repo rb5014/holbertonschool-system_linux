@@ -1,13 +1,20 @@
 #include "main.h"
 
-DIR *init_dir(char *path, char *dir_name)
+DIR *init_dir(char *prog_name, char *path, char *dir_name)
 {
 	DIR *dir;
 
 	dir = opendir(path);
 	if (dir == NULL)
 	{
-		perror("Error opening directory");
+		if (errno == EACCES)
+		{
+			fprintf(stderr, "%s: cannot open directory %s", prog_name, path);
+			perror("");
+		}
+		else
+			perror("Error opening directory");
+
 		closedir(dir);
 		free(dir_name);
 		exit(EXIT_FAILURE);
@@ -59,7 +66,7 @@ void read_directory(char *prog_name, char *path,
 	DIR *dir;
 
 
-	dir = init_dir(path, (*dir_arg).name);
+	dir = init_dir(prog_name, path, (*dir_arg).name);
 	read_entries(prog_name, dir, dir_arg, options);
 	closedir(dir);
 }

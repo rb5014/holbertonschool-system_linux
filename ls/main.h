@@ -63,13 +63,16 @@ void parse_args(int argc, char *argv[],
 				FileArg **reg_array,
 				FileArg **dir_array,
 				int *nb_reg,
-				int *nb_dir);
+				int *nb_dir,
+				bool *mult_dirs);
+
 void parse_path(char *prog_name, char *path,
 				FileArg **reg_array,
 				FileArg **dir_array,
 				int *nb_reg,
 				int *nb_dir,
-				Options *options);
+				Options *options,
+				bool *mult_dirs);
 /*************/
 
 /*** STORE ***/
@@ -84,13 +87,13 @@ void read_directory(char *prog_name, char *path,
 			FileArg *dir_arg, Options *options);
 void read_entries(char *prog_name, DIR *dir,
 				  FileArg *dir_arg, Options *options);
-DIR *init_dir(char *path, char *dir_name);
+DIR *init_dir(char *prog_name, char *path, char *dir_name);
 /************/
 
 /*** PRINT ***/
 void print_files(FileArg *reg_array, int nb_reg, Options options);
 void print_directories(FileArg *dir_array, int nb_dir,
-					   int nb_reg, Options options);
+					   int nb_reg, Options options, bool mult_dirs);
 void print_no_opt(FileArg *file_array, int nb);
 void print_one_by_line(FileArg *file_array, int nb);
 void print_long_listing_format(FileArg *file_array, int nb);
