@@ -96,6 +96,7 @@ void parse_args(int argc, char *argv[],
 				   options, &invalid_file_found);
 	}
 
-	if ((*nb_dir > 1) || ((*nb_dir == 1) && (invalid_file_found == true)))
+	if ((*nb_dir > 1) || ((*nb_dir == 1) &&
+						((nb_reg > 0) || (invalid_file_found == true))))
 		*mult_dirs = true;
 }
