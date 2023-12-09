@@ -9,6 +9,8 @@ void print_owner(uid_t st_uid)
 
 	if (usr != NULL)
 		printf("%s ", usr->pw_name);
+	else
+		print("user kaboom");
 }
 
 /**
@@ -21,6 +23,8 @@ void print_group(uid_t st_gid)
 
 	if (grp != NULL)
 		printf("%s ", grp->gr_name);
+	else
+		print("group kakaboom");
 
 }
 
