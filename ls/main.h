@@ -88,7 +88,7 @@ void store_dir_struct(char *prog_name, char *path, FileArg **dir_array,
 /*** READ ***/
 void read_directory(char *prog_name, char *path,
 			FileArg *dir_arg, Options *options);
-void read_entries(char *prog_name, DIR *dir,
+void read_entries(char *prog_name, DIR *dir, char *dir_path,
 				  FileArg *dir_arg, Options *options);
 DIR *init_dir(char *prog_name, char *path, char *dir_name);
 /************/

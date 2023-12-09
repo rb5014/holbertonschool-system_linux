@@ -1,5 +1,13 @@
 #include "main.h"
 
+/**
+ * init_dir - Initialize a DIR pointer and check if valid
+ * or have permissions to be read
+ * @prog_name: Name of the program
+ * @path: Path of the directory
+ * @dir_name: Pointer to the name of the directory store in the FileArg struct
+ * Return: The newly initialized DIR pointer to be read after
+*/
 DIR *init_dir(char *prog_name, char *path, char *dir_name)
 {
 	DIR *dir;
@@ -23,17 +31,29 @@ DIR *init_dir(char *prog_name, char *path, char *dir_name)
 	return (dir);
 }
 
-void read_entries(char *prog_name, DIR *dir,
+/**
+ * read_entries - read the entries of the DIR dir that was initialized before
+ * @prog_name: Name of the program
+ * @dir: Pointer of the DIR to be read
+ * @dir_path: String containing the path of the directory
+ * @dir_arg: FileArg struct for the dir that
+ * will get his member 'elements' updated
+ * @options: Options for the printing and/or reading
+*/
+void read_entries(char *prog_name, DIR *dir, char *dir_path,
 				  FileArg *dir_arg, Options *options)
 {
 	struct dirent *entry = NULL;
-	struct stat *st = malloc(sizeof(struct stat));
+	struct stat st;
 
 	while ((entry = readdir(dir)) != NULL)
 	{
 		FileArg element;
+		char *full_path = malloc(sizeof(char) * (_strlen(dir_path) +
+												 _strlen(entry->d_name) + 1 + 1));
+		sprintf(full_path, "%s/%s", dir_path, entry->d_name);
 
-		if (lstat(entry->d_name, st) == -1)
+		if (lstat(full_path, &st) == -1)
 		{
 			/* Invalid path, print error */
 			fprintf(stderr, "%s: cannot access %s: ", prog_name, entry->d_name);
@@ -53,14 +73,21 @@ void read_entries(char *prog_name, DIR *dir,
 
 		element.name = malloc(sizeof(char) * (_strlen(entry->d_name) + 1));
 		_strcpy(element.name, entry->d_name);
-		element.st = *st;
+		element.st = st;
 
 		store_struct(&(*dir_arg).elements, &element, &(*dir_arg).nb_elem);
 
 	}
-	free(st);
 }
 
+/**
+ * read_directory - Read the directory and its elements then store them
+ * @prog_name: Name of the program
+ * @path: String containing the path of the directory
+ * @dir_arg: FileArg struct for the dir that
+ * will get his member 'elements' updated
+ * @options: Options for the printing and/or reading
+*/
 void read_directory(char *prog_name, char *path,
 					FileArg *dir_arg, Options *options)
 {
@@ -68,6 +95,6 @@ void read_directory(char *prog_name, char *path,
 
 
 	dir = init_dir(prog_name, path, (*dir_arg).name);
-	read_entries(prog_name, dir, dir_arg, options);
+	read_entries(prog_name, dir, path, dir_arg, options);
 	closedir(dir);
 }
