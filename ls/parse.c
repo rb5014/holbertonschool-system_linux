@@ -72,13 +72,8 @@ void parse_args(int argc, char *argv[],
 {
 	int i;
 	char *prog_name = argv[0];
+	bool name_given = false;
 	bool invalid_file_found = false;
-
-	if (argc == 1)
-	{
-		argv[1] = ".";
-		argc++;
-	}
 
 	for (i = 1; i < argc; i++)
 	{
@@ -86,12 +81,20 @@ void parse_args(int argc, char *argv[],
 		if (argv[i][0] == '-')
 			/* Update options struct */
 			update_options(prog_name, &argv[i][1], options);
+		else
+			name_given = true;
 	}
-
+	if (name_given == false)
+	{
+		parse_path(prog_name, ".", reg_array, dir_array, nb_reg, nb_dir,
+				   options, &invalid_file_found);
+		return;
+	}
 	for (i = 1; i < argc; i++)
 	{
 		if (argv[i][0] == '-')
 			continue;
+
 		parse_path(prog_name, argv[i], reg_array, dir_array, nb_reg, nb_dir,
 				   options, &invalid_file_found);
 	}
