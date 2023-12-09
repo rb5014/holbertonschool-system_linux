@@ -1,101 +1,45 @@
-#include "custom_functions.h"
-
-
-/**
- * is_valid_entry - Check if a file/directory entry is valid.
- * @path: Path of the file/directory entry.
- *
- * Return: true if the entry is a valid file/directory, false otherwise.
- */
-bool is_valid_entry(const char *path)
-{
-	struct stat st;
-
-	/* Check if the directory entry is valid */
-	if (lstat(path, &st) == -1)
-	{
-		return (false);  /* Failed to stat, it is invalid */
-	}
-	return (true);
-}
+#include "main.h"
 
 /**
- * check_entries - Check and modify argv entries.
- * @argc: Number of command-line arguments
- * @argv: Array of command-line arguments.
- */
-void check_entries(int argc, char **argv)
+ * update_options - Update the Option (defined in "main.h") structure members
+ * @prog_name: Name of the program
+ * @arg: Argument containing the options code
+ * @options: Option structure to be updated
+*/
+void update_options(char *prog_name, char *arg, Options *options)
 {
 	int i;
 
-	/* Iterate over argv, removing invalid entries */
-	for (i = 1; i < argc; i++)
+	for (i = 0; arg[i] != '\0'; i++)
 	{
-		if (is_valid_entry(argv[i]) == false)
+		switch (arg[i])
 		{
-			/* Invalid entry, print error and skip it */
-			fprintf(stderr, "%s: cannot access %s: ", argv[0], argv[i]);
-			perror("");
-			argv[i] = NULL;
-		}
-	}
+			case '1':
+				options->one_by_line = true;
+				break;
 
-}
+			case 'a':
+				options->all = true;
+				break;
 
-/**
- * sort_entries - Sort argv entries.
- * @n_entries: Number of entries.
- * @argv: Pointer to the array of command-line arguments.
- */
-void sort_entries(int n_entries, char ***argv)
-{
-	_qsort(&argv[1], n_entries, sizeof(char *), compare_types);
-}
+			case 'A':
+				options->almost_all = true;
+				break;
 
-/**
- * process_entries - Execute the actual operations based on entries
- * @argc: Number of command-line arguments.
- * @argv: Pointer to the array of command-line arguments.
- * @is_mult_args: Boolean stating if there are multiple arguments or not
- */
-void process_entries(int argc, char **argv, bool is_mult_args)
-{
-	char **names = NULL;
-	int i;
-	const char *dir_path;
-	int count = 0;
-	/* int n_entries = argc - 1; */
-	struct stat st;
+			case 'l':
+				options->long_listing_format = true;
+				break;
 
-	/* Sort entries alphabetically and by type */
-	/* sort_entries(argc, &argv); */
-	for (i = 1; i < argc; i++)
-	{
-		if (argv[i] == NULL)
-		{
-			continue;
-		}
-		if (i > 1)
-		{
-			printf("\n");
-		}
-
-		dir_path = argv[i];
-
-		lstat(argv[i], &st);
-		if (S_ISREG(st.st_mode))
-			printf("%s\n", argv[i]);
-		else if (S_ISDIR(st.st_mode))
-		{
-			/* Read the contents of the specified directory */
-			if (read_directory(dir_path, &names, &count, argv[0]) == -1)
-				continue;
-
-			/* Print the sorted names */
-			print_dir_content(names, count, dir_path, is_mult_args);
+			default:
+				fprintf(stderr, "%s: invalid option -- '%c'\n",
+						prog_name, arg[i]);
+				fprintf(stderr, "Try '%s --help' for more information.\n",
+						prog_name);
+				exit(EXIT_FAILURE);
 		}
 	}
 }
+
 
 /**
  * main - Entry point for the "hls" program.
@@ -112,29 +56,33 @@ void process_entries(int argc, char **argv, bool is_mult_args)
  *   hls [directory_path]
  *
  * Return:
- *   0 on success, EXIT_FAILURE on failure.
+ *   0 on success.
  */
 int main(int argc, char *argv[])
 {
-	bool is_mult_args = false;
+	/* FileArg structure defined in "main.h" */
+	FileArg *reg_array = NULL;
+	FileArg *dir_array = NULL;
+	int nb_reg = 0;
+	int nb_dir = 0;
 
-	/* Check if a directory name is provided as a command-line argument */
-	if (argc <= 1)
-	{
-		argv[1] = ".";
-		argc++;
-	}
-	/* Check if there are multiple file/directory names provided */
-	else if (argc > 2)
-	{
-		is_mult_args = true;
-	}
+	/* Options structure defined in "main.h" */
+	Options options;
 
-	/* Check entries validity, remove invalids and print error */
-	check_entries(argc, argv);
+	options.one_by_line = false;
+	options.all = false;
+	options.almost_all = false;
+	options.long_listing_format = false;
 
-	/* Reorganize entries and print their content (or names for files) */
-	process_entries(argc, argv, is_mult_args);
+	parse_args(argc, argv, &options, &reg_array, &dir_array, &nb_reg, &nb_dir);
+
+	if (nb_reg > 0)
+		print_files(reg_array, nb_reg, options);
+
+	if (nb_dir > 0)
+		print_directories(dir_array, nb_dir, nb_reg, options);
+
+	free_all(&reg_array, &dir_array, nb_reg, nb_dir);
 
 	return (0);
 }

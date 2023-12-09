@@ -1,4 +1,4 @@
-#include "custom_functions.h"
+#include "main.h"
 
 /**
  * _strcpy - Copy a string.
