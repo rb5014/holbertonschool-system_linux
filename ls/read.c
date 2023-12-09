@@ -46,6 +46,7 @@ void read_entries(char *prog_name, DIR *dir, char *dir_path,
 	struct dirent *entry = NULL;
 	struct stat st;
 	char *full_path = NULL;
+
 	while ((entry = readdir(dir)) != NULL)
 	{
 		FileArg element;
