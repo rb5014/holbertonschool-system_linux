@@ -53,6 +53,7 @@ void print_long_listing_format(FileArg *file_array, int nb)
 			printf("-");
 		print_permissions(file_array[i].st.st_mode);
 		printf("%li ", file_array[i].st.st_nlink);
+		printf("%s ", getpwuid(file_array[i].st.st_uid)->pw_name);
 
 
 		printf("%s\n", file_array[i].name);
