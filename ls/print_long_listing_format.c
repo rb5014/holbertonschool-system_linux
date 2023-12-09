@@ -10,10 +10,7 @@ void print_owner(uid_t st_uid)
 	if (usr != NULL)
 		printf("%s ", usr->pw_name);
 	else
-	{
-		printf("%i", st_uid);
-		printf("null");
-	}
+		printf("%i ", st_uid);
 
 }
 
@@ -28,11 +25,7 @@ void print_group(uid_t st_gid)
 	if (grp != NULL)
 		printf("%s ", grp->gr_name);
 	else
-	{
-		printf("%i", st_gid);
-		printf("null");
-	}
-
+		printf("%i ", st_gid);
 }
 
 /**
