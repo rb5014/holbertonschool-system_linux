@@ -80,7 +80,6 @@ void read_entries(char *prog_name, DIR *dir, char *dir_path,
 		if (lstat((const char *)entry_full_path, &st) == -1)
 		{
 			free(entry_full_path);
-			/* Invalid path, print error */
 			fprintf(stderr, "%s: cannot access %s: ", prog_name, entry->d_name);
 			perror("");
 			return;
@@ -92,15 +91,19 @@ void read_entries(char *prog_name, DIR *dir, char *dir_path,
 		}
 		element.name = malloc(sizeof(char) * (_strlen(entry->d_name) + 1));
 		_strcpy(element.name, entry->d_name);
+		element.relative_path = NULL;
 		element.st = st;
 		element.elements = NULL;
 		element.nb_elem = 0;
 		if (S_ISDIR(st.st_mode) && (options->recursive == true))
+		{
+			element.relative_path = malloc(sizeof(char) * (_strlen(entry->d_name) + 1));
+			_strcpy(element.relative_path, entry_full_path);
 			store_dir_struct(prog_name, entry_full_path, &(dir_arg->elements),
 							 &element, &(dir_arg->nb_elem), options);
+		}
 		else
 			store_struct(&(dir_arg->elements), &element, &(dir_arg->nb_elem));
-
 		free(entry_full_path);
 	}
 }

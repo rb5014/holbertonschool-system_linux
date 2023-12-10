@@ -31,6 +31,8 @@ void free_dirs(FileArg **dir_array, int nb_dir)
 	{
 		free_dirs(&(*dir_array)[i].elements, (*dir_array)[i].nb_elem);
 		free((*dir_array)[i].name);
+		if ((*dir_array)[i].relative_path)
+			free((*dir_array)[i].relative_path);
 	}
 	free(*dir_array);
 }

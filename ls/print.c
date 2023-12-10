@@ -65,7 +65,12 @@ void print_files(FileArg *file_array, int nb, Options options, bool mult_dirs)
 void print_directory(FileArg dir, Options options, bool mult_dirs)
 {
 	if ((mult_dirs == true) || (options.recursive == true))
-		printf("%s:\n", dir.name);
+	{
+		if (dir.relative_path)
+			printf("%s:\n", dir.relative_path);
+		else
+			printf("%s:\n", dir.name);
+	}
 	print_files(dir.elements, dir.nb_elem, options, mult_dirs);
 }
 

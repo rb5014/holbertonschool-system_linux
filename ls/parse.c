@@ -36,6 +36,7 @@ void parse_path(char *prog_name, char *path,
 
 	file.name = malloc(sizeof(char) * (_strlen(path) + 1));
 	_strcpy(file.name, path);
+	file.relative_path = NULL;
 	file.st = st;
 	file.elements = NULL;
 	file.nb_elem = 0;

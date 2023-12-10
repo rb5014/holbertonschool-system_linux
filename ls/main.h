@@ -23,6 +23,7 @@ typedef int bool;
  * struct FileArg - Structure holding the argument name and numerous
  * informations stored in strut stat member
  * @name: Name of the argument
+ * @relative_path: Relative path of the argument;
  * @st: Structure filled with argument info generated with lstat function
  * @elements: In the case of a directory,
  *  we can get also all his files in the struct
@@ -31,6 +32,7 @@ typedef int bool;
 typedef struct FileArg
 {
 	char *name;
+	char *relative_path;
 	struct stat st;
 	struct FileArg *elements;
 	int nb_elem;
