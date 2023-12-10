@@ -42,6 +42,7 @@ typedef struct FileArg
  * @all: Do not ignore entries starting with .
  * @almost_all: Same as all but do not list implied . and ..
  * @long_listing_format: Use a long listing format
+* @recursive: Print recursively for all directories
 */
 typedef struct Options
 {
@@ -49,6 +50,7 @@ typedef struct Options
 	bool all; /* a */
 	bool almost_all; /* A */
 	bool long_listing_format; /* l */
+bool recursive; /* R */
 } Options;
 /******************/
 void update_options(char *prog_name, char *arg, Options *options);
@@ -82,7 +84,7 @@ void parse_path(char *prog_name, char *path,
 FileArg *update_array(FileArg file, FileArg **file_array, int nb_elem);
 void store_struct(FileArg **array, FileArg *file, int *nb);
 void store_dir_struct(char *prog_name, char *path, FileArg **dir_array,
-			   FileArg *dir_file, int *nb, Options *options);
+			   FileArg *dir_arg, int *nb, Options *options);
 /*************/
 
 /*** READ ***/
@@ -91,15 +93,16 @@ void read_directory(char *prog_name, char *path,
 void read_entries(char *prog_name, DIR *dir, char *dir_path,
 				  FileArg *dir_arg, Options *options);
 DIR *init_dir(char *prog_name, char *path, char *dir_name);
+int check_hidden_with_options(char *entry_name, Options *options);
 /************/
 
 /*** PRINT ***/
-void print_files(FileArg *reg_array, int nb_reg, Options options);
-void print_directories(FileArg *dir_array, int nb_dir,
-					   int nb_reg, Options options, bool mult_dirs);
-void print_no_opt(FileArg *file_array, int nb);
-void print_one_by_line(FileArg *file_array, int nb);
-void print_long_listing_format(FileArg *file_array, int nb);
+void print_all(FileArg *dir_array, FileArg *reg_array, int nb_dir,
+			   int nb_reg, Options options, bool mult_dirs);
+void print_files(FileArg *file_array, int nb, Options options, bool mult_dirs);
+void print_file(FileArg file, int current_index, Options options);
+void print_directory(FileArg dir, Options options, bool mult_dirs);
+void print_long_listing_format(FileArg file);
 void print_permissions(mode_t st_mode);
 void print_time(char *time);
 void print_owner(uid_t st_uid);

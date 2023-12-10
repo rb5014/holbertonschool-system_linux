@@ -45,7 +45,7 @@ void store_struct(FileArg **array, FileArg *file, int *nb)
  * @path: path of the dir to read and add
  * @dir_array: Array to update
  * @dir_arg: Dir to add to array
- * @nb: Number of elements in array (old)
+ * @nb: Number of elements in dir_array (old)
  * @options: Options struct
 */
 void store_dir_struct(char *prog_name, char *path, FileArg **dir_array,

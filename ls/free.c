@@ -29,8 +29,8 @@ void free_dirs(FileArg **dir_array, int nb_dir)
 
 	for (i = 0; i < nb_dir; i++)
 	{
+		free_dirs(&(*dir_array)[i].elements, (*dir_array)[i].nb_elem);
 		free((*dir_array)[i].name);
-		free_files(&(*dir_array)[i].elements, (*dir_array)[i].nb_elem);
 	}
 	free(*dir_array);
 }

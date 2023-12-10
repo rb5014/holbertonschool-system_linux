@@ -29,7 +29,9 @@ void update_options(char *prog_name, char *arg, Options *options)
 			case 'l':
 				options->long_listing_format = true;
 				break;
-
+			case 'R':
+				options->recursive = true;
+				break;
 			default:
 				fprintf(stderr, "%s: invalid option -- '%c'\n",
 						prog_name, arg[i]);
@@ -74,15 +76,12 @@ int main(int argc, char *argv[])
 	options.all = false;
 	options.almost_all = false;
 	options.long_listing_format = false;
+	options.recursive = false;
 
 	parse_args(argc, argv, &options, &reg_array, &dir_array,
 			   &nb_reg, &nb_dir, &mult_dirs);
 
-	if (nb_reg > 0)
-		print_files(reg_array, nb_reg, options);
-
-	if (nb_dir > 0)
-		print_directories(dir_array, nb_dir, nb_reg, options, mult_dirs);
+	print_all(dir_array, reg_array, nb_dir, nb_reg, options, mult_dirs);
 
 	free_all(&reg_array, &dir_array, nb_reg, nb_dir);
 

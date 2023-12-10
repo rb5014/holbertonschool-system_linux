@@ -67,32 +67,26 @@ void print_permissions(mode_t st_mode)
 
 /**
  * print_long_listing_format - Print files in long listing format
- * @file_array: Array of files to print
- * @nb: Nb of elements in the array
+ * @file: Array of files to print
 */
-void print_long_listing_format(FileArg *file_array, int nb)
+void print_long_listing_format(FileArg file)
 {
-	int i;
+	if (S_ISDIR(file.st.st_mode))
+		printf("d");
+	else
+		printf("-");
 
-	for (i = 0; i < nb; i++)
-	{
-		if (S_ISDIR(file_array[i].st.st_mode))
-			printf("d");
-		else
-			printf("-");
+	print_permissions(file.st.st_mode);
 
-		print_permissions(file_array[i].st.st_mode);
+	printf("%li ", file.st.st_nlink);
 
-		printf("%li ", file_array[i].st.st_nlink);
+	print_owner(file.st.st_uid);
 
-		print_owner(file_array[i].st.st_uid);
+	print_group(file.st.st_gid);
 
-		print_group(file_array[i].st.st_gid);
+	printf("%li ", file.st.st_size);
 
-		printf("%li ", file_array[i].st.st_size);
+	print_time(ctime(&(file.st.st_mtime)));
 
-		print_time(ctime(&(file_array[i].st.st_mtime)));
-
-		printf("%s\n", file_array[i].name);
-	}
+	printf("%s", file.name);
 }

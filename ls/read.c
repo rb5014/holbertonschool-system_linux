@@ -1,4 +1,27 @@
 #include "main.h"
+/**
+ * check_hidden_with_options - Check if entry is hidden and
+ *  if it can be printed by checking the options
+ * @entry_name: name of the entry to check with options
+ * @options: options to check (all and almost all)
+ * Return: 0 if valid, -1 otherwise
+*/
+int check_hidden_with_options(char *entry_name, Options *options)
+{
+	if ((_strcmp(".", entry_name) == 0) ||
+		(_strcmp("..", entry_name) == 0))
+	{
+		if (options->all == false)
+		{
+			return (-1);
+		}
+	} else if ((entry_name[0] == '.') && (options->all == false) &&
+				(options->almost_all == false))
+	{
+		return (-1);
+	}
+	return (0);
+}
 
 /**
  * init_dir - Initialize a DIR pointer and check if valid
@@ -45,43 +68,40 @@ void read_entries(char *prog_name, DIR *dir, char *dir_path,
 {
 	struct dirent *entry = NULL;
 	struct stat st;
-	char *full_path = NULL;
+	char *entry_full_path = NULL;
 
 	while ((entry = readdir(dir)) != NULL)
 	{
 		FileArg element;
 
-		full_path = malloc(sizeof(char) * (_strlen(dir_path) +
+		entry_full_path = malloc(sizeof(char) * (_strlen(dir_path) +
 										   _strlen(entry->d_name) + 1 + 1));
-		sprintf(full_path, "%s/%s", dir_path, entry->d_name);
-		if (lstat((const char *)full_path, &st) == -1)
+		sprintf(entry_full_path, "%s/%s", dir_path, entry->d_name);
+		if (lstat((const char *)entry_full_path, &st) == -1)
 		{
-			free(full_path);
+			free(entry_full_path);
 			/* Invalid path, print error */
 			fprintf(stderr, "%s: cannot access %s: ", prog_name, entry->d_name);
 			perror("");
 			return;
 		}
-
-		if ((_strcmp(".", entry->d_name) == 0) ||
-		    (_strcmp("..", entry->d_name) == 0))
+		if (check_hidden_with_options(entry->d_name, options) == -1)
 		{
-			if (options->all == false)
-			{
-				free(full_path);
-				continue;
-			}
-		} else if ((entry->d_name[0] == '.') && (options->all == false) &&
-				   (options->almost_all == false))
-		{
-			free(full_path);
+			free(entry_full_path);
 			continue;
 		}
 		element.name = malloc(sizeof(char) * (_strlen(entry->d_name) + 1));
 		_strcpy(element.name, entry->d_name);
 		element.st = st;
-		store_struct(&(*dir_arg).elements, &element, &(*dir_arg).nb_elem);
-		free(full_path);
+		element.elements = NULL;
+		element.nb_elem = 0;
+		if (S_ISDIR(st.st_mode) && (options->recursive == true))
+			store_dir_struct(prog_name, entry_full_path, &(dir_arg->elements),
+							 &element, &(dir_arg->nb_elem), options);
+		else
+			store_struct(&(dir_arg->elements), &element, &(dir_arg->nb_elem));
+
+		free(entry_full_path);
 	}
 }
 

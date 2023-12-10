@@ -1,77 +1,101 @@
 #include "main.h"
 
 /**
- * print_one_by_line - print files one by line
- * @file_array: array of files to print
- * @nb: nb of elements in the array
+ * print_file - Print current file being processed in print_files
+ * @file: FileArg to print
+ * @current_index: Current index in the loop of print_files
+ * @options: Options for formating
 */
-void print_one_by_line(FileArg *file_array, int nb)
+void print_file(FileArg file, int current_index, Options options)
 {
-	int i;
-
-	for (i = 0; i < nb; i++)
+	if (options.long_listing_format == true)
 	{
-		printf("%s\n", file_array[i].name);
-
+		if (current_index > 0)
+			printf("\n");
+		print_long_listing_format(file);
+	}
+	else
+	{
+		if (options.one_by_line == true)
+		{
+			if (current_index > 0)
+				printf("\n");
+			printf("%s", file.name);
+		}
+		else
+			printf("%s  ", file.name);
 	}
 }
-
-/**
- * print_no_opt - print normal without options
- * @file_array: array of files to print
- * @nb: nb of elements in the array
-*/
-void print_no_opt(FileArg *file_array, int nb)
-{
-	int i;
-
-	for (i = 0; i < nb; i++)
-	{
-		printf("%s  ", file_array[i].name);
-
-	}
-	printf("\n");
-}
-
 /**
  * print_files - Print each files/directories of a dir_array
  * @file_array: Array of files entries to print
  * @nb: Number of elements in that array
  * @options: Options struct containing the printing options
- *
+ * @mult_dirs: If true, then more than one dir is present in
+ * the elements ( if the file is a dir it has elements)
  * It can either print the files that are arguments of the program,
  * or the entries found in the directories.
 */
-void print_files(FileArg *file_array, int nb, Options options)
-{
-	if (options.long_listing_format == true)
-		print_long_listing_format(file_array, nb);
-	else if (options.one_by_line == true)
-		print_one_by_line(file_array, nb);
-	else
-		print_no_opt(file_array, nb);
-}
-
-/**
- * print_directories - Print each files/directories of a dir_array
- * @dir_array: Array of dirs to print
- * @nb_dir: Number of elements in that array
- * @nb_reg: Number of elements in reg_array, to know if we have to add
- * a newline between the two arrays
- * @options: Options struct containing the printing options
- * @mult_dirs: If true, then more than one dir is present in the arguments
-*/
-void print_directories(FileArg *dir_array, int nb_dir,
-					   int nb_reg, Options options, bool mult_dirs)
+void print_files(FileArg *file_array, int nb, Options options, bool mult_dirs)
 {
 	int i;
 
-	for (i = 0; i < nb_dir; i++)
+	for (i = 0; i < nb; i++)
 	{
-		if ((i > 0) || (nb_reg > 0))
+		print_file(file_array[i], i, options);
+	}
+	printf("\n");
+	for (i = 0; i < nb; i++)
+	{
+		if ((S_ISDIR(file_array[i].st.st_mode)) && (options.recursive == true))
+		{
+			if (i < (nb - 1))
+				printf("\n");
+			print_directory(file_array[i], options, mult_dirs);
+		}
+	}
+}
+
+/**
+ * print_directory - Print each files/directories name of a directory
+ * @dir: dir to print
+ * @options: Options struct containing the printing options
+ * @mult_dirs: If true, then more than one dir is present in the arguments
+*/
+void print_directory(FileArg dir, Options options, bool mult_dirs)
+{
+	if ((mult_dirs == true) || (options.recursive == true))
+		printf("%s:\n", dir.name);
+	print_files(dir.elements, dir.nb_elem, options, mult_dirs);
+}
+
+/**
+ * print_all - Print all the elements
+ * @dir_array: Array of dirs
+ * @reg_array: Array of regular files to be printed first
+ * @nb_dir: Number of elements of dir_array
+ * @nb_reg: Number of elements of reg_array
+ * @options: Options for printing
+ * @mult_dirs: If true, then multiple dirs
+ * or mixed file and dir args format activated
+ *
+*/
+void print_all(FileArg *dir_array, FileArg *reg_array, int nb_dir,
+			   int nb_reg, Options options, bool mult_dirs)
+{
+	if (nb_reg > 0)
+		print_files(reg_array, nb_reg, options, false);
+	if (nb_dir > 0)
+	{
+		int i;
+
+		if (nb_reg > 0)
 			printf("\n");
-		if (mult_dirs == true)
-			printf("%s:\n", dir_array[i].name);
-		print_files(dir_array[i].elements, dir_array[i].nb_elem, options);
+		for (i = 0; i < nb_dir; i++)
+		{
+			if (i > 0)
+				printf("\n");
+			print_directory(dir_array[i], options, mult_dirs);
+		}
 	}
 }
