@@ -59,23 +59,26 @@ char *check_remainder(char **remainder)
 		newline_pos = find_newline(*remainder); /* Find newline in remainder */
 		if (newline_pos) /* Split at the newline if found */
 		{
-			size_t i;
+			size_t i, len = 0;
+
+			/* Calculate the length of the string after the newline */
+			for (char *ptr = newline_pos + 1; *ptr; ptr++)
+			{
+				len++;
+			}
 
 			*newline_pos = '\0';
 			line = strdup(*remainder);
+			/* Move the string after the newline to the start of remainder */
 			if (*remainder < (newline_pos + 1))
 			{
-				for (i = 0; i < strlen(newline_pos + 1) + 1; i++)
-				{
+				for (i = 0; i <= len; i++)
 					(*remainder)[i] = (newline_pos + 1)[i];
-				}
 			}
 			else
 			{
-				for (i = strlen(newline_pos + 1) + 1; i > 0; i--)
-				{
+				for (i = len; i > 0; i--)
 					(*remainder)[i - 1] = (newline_pos + 1)[i - 1];
-				}
 			}
 			return (line);
 		}
