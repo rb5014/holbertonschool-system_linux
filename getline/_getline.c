@@ -59,9 +59,24 @@ char *check_remainder(char **remainder)
 		newline_pos = find_newline(*remainder); /* Find newline in remainder */
 		if (newline_pos) /* Split at the newline if found */
 		{
+			size_t i;
+
 			*newline_pos = '\0';
 			line = strdup(*remainder);
-			_memmove(*remainder, newline_pos + 1, strlen(newline_pos + 1) + 1);
+			if (*remainder < (newline_pos + 1))
+			{
+				for (i = 0; i < strlen(newline_pos + 1) + 1; i++)
+				{
+					(*remainder)[i] = (newline_pos + 1)[i];
+				}
+			}
+			else
+			{
+				for (i = strlen(newline_pos + 1) + 1; i > 0; i--)
+				{
+					(*remainder)[i - 1] = (newline_pos + 1)[i - 1];
+				}
+			}
 			return (line);
 		}
 

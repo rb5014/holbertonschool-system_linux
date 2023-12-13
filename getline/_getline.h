@@ -10,9 +10,9 @@
 #define READ_SIZE BUFSIZ
 
 char *_getline(const int fd);
+char *find_newline(char *str);
 char *read_line(const int fd, char **remainder);
 char *check_remainder(char **remainder);
 void append_buffer(char **line, char *buffer, size_t *len, size_t n_read);
-void _memmove(char *dest, char *src, size_t n);
 
 #endif /* _GETLINE_H */
