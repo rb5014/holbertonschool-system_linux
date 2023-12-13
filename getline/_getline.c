@@ -155,16 +155,18 @@ void append_buffer(char **line, char *buffer, size_t *len, size_t n_read)
  */
 void safe_move(char *dest, char *src, size_t n)
 {
+	size_t i;
+
 	if (dest < src)
 	{
-		for (size_t i = 0; i < n; i++)
+		for (i = 0; i < n; i++)
 		{
 			dest[i] = src[i];
 		}
 	}
 	else
 	{
-		for (size_t i = n; i != 0; i--)
+		for (i = n; i != 0; i--)
 		{
 			dest[i - 1] = src[i - 1];
 		}
