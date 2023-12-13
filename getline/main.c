@@ -28,8 +28,11 @@ int main(int ac, char *av[])
 		return (EXIT_FAILURE);
 	}
 	i = 0;
-	while ((line = _getline(fd)))
+	while (1)
 	{
+		line = _getline(fd);
+		if (!line)
+			break;
 		printf("%s\n", line);
 		fflush(stdout);
 		i++;
