@@ -71,7 +71,7 @@ char *check_remainder(char **remainder)
 			*newline_pos = '\0';
 			line = strdup(*remainder);
 			/* Move the string after the newline to the start of remainder */
-			safe_move(*remainder, newline_pos + 1, strlen(newline_pos + 1) + 1);
+			safe_move(*remainder, newline_pos + 1, len + 1);
 
 			return (line);
 		}
