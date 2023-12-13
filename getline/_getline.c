@@ -60,9 +60,10 @@ char *check_remainder(char **remainder)
 		if (newline_pos) /* Split at the newline if found */
 		{
 			size_t i, len = 0;
+			char *ptr;
 
 			/* Calculate the length of the string after the newline */
-			for (char *ptr = newline_pos + 1; *ptr; ptr++)
+			for (ptr = newline_pos + 1; *ptr; ptr++)
 			{
 				len++;
 			}
