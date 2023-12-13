@@ -90,6 +90,8 @@ char *read_line(const int fd, char **remainder)
 
 	while (1)
 	{
+		char *newline_pos;
+
 		n_read = read(fd, buffer, READ_SIZE); /* Read chunk into buffer */
 		if (n_read <= 0) /* Check for end of file or read error */
 			return (n_read == 0 ? line : NULL);
@@ -97,7 +99,7 @@ char *read_line(const int fd, char **remainder)
 		buffer[n_read] = '\0'; /* Null-terminate the read chunk */
 		append_buffer(&line, buffer, &len, n_read); /* Append chunk to line */
 
-		char *newline_pos = find_newline(line); /* Check for newline in line */
+		newline_pos = find_newline(line); /* Check for newline in line */
 
 		if (newline_pos) /* Split line at newline and prepare remainder */
 		{
