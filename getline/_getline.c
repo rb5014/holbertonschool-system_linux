@@ -59,7 +59,7 @@ char *check_remainder(char **remainder)
 		newline_pos = find_newline(*remainder); /* Find newline in remainder */
 		if (newline_pos) /* Split at the newline if found */
 		{
-			size_t i, len = 0;
+			size_t len = 0;
 			char *ptr;
 
 			/* Calculate the length of the string after the newline */
@@ -71,16 +71,8 @@ char *check_remainder(char **remainder)
 			*newline_pos = '\0';
 			line = strdup(*remainder);
 			/* Move the string after the newline to the start of remainder */
-			if (*remainder < (newline_pos + 1))
-			{
-				for (i = 0; i <= len; i++)
-					(*remainder)[i] = (newline_pos + 1)[i];
-			}
-			else
-			{
-				for (i = len; i > 0; i--)
-					(*remainder)[i - 1] = (newline_pos + 1)[i - 1];
-			}
+			safe_move(*remainder, newline_pos + 1, strlen(newline_pos + 1) + 1);
+
 			return (line);
 		}
 
@@ -155,3 +147,26 @@ void append_buffer(char **line, char *buffer, size_t *len, size_t n_read)
 	*len += n_read; /* Update line length */
 }
 
+/**
+ * safe_move - Safely moves overlapping memory regions.
+ * @dest: The destination address.
+ * @src: The source address.
+ * @n: The number of bytes to move.
+ */
+void safe_move(char *dest, char *src, size_t n)
+{
+	if (dest < src)
+	{
+		for (size_t i = 0; i < n; i++)
+		{
+			dest[i] = src[i];
+		}
+	}
+	else
+	{
+		for (size_t i = n; i != 0; i--)
+		{
+			dest[i - 1] = src[i - 1];
+		}
+	}
+}
