@@ -17,7 +17,9 @@ char *_getline(const int fd)
 {
 	static char *remainder;  /* Static remainder from previous reads */
 	static int eof_flag; /* Static flag for EOF, 1 when n_read < READ_SIZE */;
-	char *line = check_remainder(&remainder); /* Check for any remaining lines */
+	char *line = NULL;
+
+	line = check_remainder(&remainder); /* Check for any remaining lines */
 
 	if (line)
 		return (line);
