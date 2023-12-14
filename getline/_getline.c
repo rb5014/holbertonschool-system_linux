@@ -106,10 +106,13 @@ char *read_line(const int fd, char **remainder, int *eof_flag)
 	ssize_t n_read;
 	size_t len = 0;
 
+
 	while (1)
 	{
 		char *newline_pos;
 
+		#undef READ_SIZE
+		#define READ_SIZE BUFSIZ
 		n_read = read(fd, buffer, READ_SIZE); /* Read chunk into buffer */
 
 		/* Check for end of file or read error */
