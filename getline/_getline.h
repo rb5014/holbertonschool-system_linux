@@ -7,7 +7,7 @@
 #include <stdio.h>
 
 /* Macro defining the number of bytes to read at a time */
-#define READ_SIZE 1
+#define READ_SIZE BUFSIZ
 
 char *_getline(const int fd);
 char *find_newline(char *str);
