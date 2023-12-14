@@ -109,10 +109,8 @@ char *read_line(const int fd, char **remainder, int *eof_flag)
 
 	while (1)
 	{
-		char *newline_pos;
+		char *newline_pos = NULL;
 
-		#undef READ_SIZE
-		#define READ_SIZE BUFSIZ
 		n_read = read(fd, buffer, READ_SIZE); /* Read chunk into buffer */
 
 		/* Check for end of file or read error */
@@ -133,7 +131,8 @@ char *read_line(const int fd, char **remainder, int *eof_flag)
 		if (newline_pos) /* Split line at newline and prepare remainder */
 		{
 			*newline_pos = '\0';
-			*remainder = strdup(newline_pos + 1);
+			if (READ_SIZE != 1)
+				*remainder = strdup(newline_pos + 1);
 			return (line);
 		}
 	}
