@@ -16,13 +16,19 @@
 char *_getline(const int fd)
 {
 	static char *remainder;  /* Static remainder from previous reads */
-
+	static int eof_flag; /* Static flag for EOF, 1 when n_read < READ_SIZE */;
 	char *line = check_remainder(&remainder); /* Check for any remaining lines */
 
 	if (line)
 		return (line);
-	return (read_line(fd, &remainder)); /* Read new line from file descriptor */
+
+	if (eof_flag && !remainder)
+		return (NULL); /* Return NULL if EOF flag is set and no remainder */
+
+	/* Read new line from file descriptor */
+	return (read_line(fd, &remainder, &eof_flag));
 }
+
 
 /**
  * find_newline - Finds the first occurrence of a newline character
@@ -87,12 +93,13 @@ char *check_remainder(char **remainder)
  * read_line - Reads a line from a file descriptor.
  * @fd: File descriptor to read from.
  * @remainder: Pointer to the remainder string.
+ * @eof_flag: Pointer to static EOF flag when n_read < READ_SIZE
  * Return: Complete line read, or NULL on error or end of file.
  * Description: This function reads from the file descriptor in chunks
  *              and appends each chunk to the current line until a newline
  *              is found or the file ends.
  */
-char *read_line(const int fd, char **remainder)
+char *read_line(const int fd, char **remainder, int *eof_flag)
 {
 	static char buffer[READ_SIZE + 1]; /* Buffer for read chunks */
 	char *line = NULL;
@@ -104,8 +111,16 @@ char *read_line(const int fd, char **remainder)
 		char *newline_pos;
 
 		n_read = read(fd, buffer, READ_SIZE); /* Read chunk into buffer */
-		if (n_read <= 0) /* Check for end of file or read error */
-			return (n_read == 0 ? line : NULL);
+
+		/* Check for end of file or read error */
+		if (n_read < READ_SIZE)
+		{
+			*eof_flag = 1; /* Set EOF indicator */
+			if (buffer[n_read - 1] == '\n')
+				buffer[n_read - 1] = '\0';
+			if (n_read <= 0)
+				return (n_read == 0 ? line : NULL);
+		}
 
 		buffer[n_read] = '\0'; /* Null-terminate the read chunk */
 		append_buffer(&line, buffer, &len, n_read); /* Append chunk to line */

@@ -11,7 +11,7 @@
 
 char *_getline(const int fd);
 char *find_newline(char *str);
-char *read_line(const int fd, char **remainder);
+char *read_line(const int fd, char **remainder, int *eof_flag);
 char *check_remainder(char **remainder);
 void append_buffer(char **line, char *buffer, size_t *len, size_t n_read);
 void safe_move(char *dest, char *src, size_t n);
