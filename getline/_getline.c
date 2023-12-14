@@ -3,6 +3,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+static int previous_fd;
+
 /**
  * _getline - Reads an entire line from a file descriptor.
  * @fd: File descriptor to read from.
@@ -19,8 +21,16 @@ char *_getline(const int fd)
 	static int eof_flag; /* Static flag for EOF, 1 when n_read < READ_SIZE */
 	char *line = check_remainder(&remainder); /* Check for any remaining lines */
 
-	if (fd == -1)
-		return (NULL);
+	if (fd != previous_fd)
+		if (remainder)
+		{
+			free(remainder);
+			remainder = NULL;
+			eof_flag = 0;
+			previous_fd = fd;
+			if (fd == -1)
+				return (NULL);
+		}
 	if (line)
 		return (line);
 
