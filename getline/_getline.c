@@ -118,13 +118,17 @@ char *check_remainder(char **remainder)
 			if (*nl == '\n')
 			{
 				size_t len = 0;
+				char *ptr;
 
 				*nl = '\0';
 
 				line = strdup(*remainder);
-				len = strlen(nl + 1) + 1;
+				for (ptr = nl + 1; *ptr; ptr++)
+				{
+					len++;
+				}
 
-				safe_move(*remainder, nl + 1, len);
+				safe_move(*remainder, nl + 1, len + 1);
 				return (line);
 			}
 		}
