@@ -10,7 +10,8 @@
 #define READ_SIZE BUFSIZ
 
 char *_getline(const int fd);
-char *find_newline(char *str);
+int update_fd_arrays(int fd, int **fd_array, char ***remainder,
+					 int **eof_flag_array, int *nb_fd);
 char *read_line(const int fd, char **remainder, int *eof_flag);
 char *check_remainder(char **remainder);
 void append_buffer(char **line, char *buffer, size_t *len, size_t n_read);

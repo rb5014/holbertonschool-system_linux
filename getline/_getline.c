@@ -3,7 +3,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-static int previous_fd;
 
 /**
  * _getline - Reads an entire line from a file descriptor.
@@ -17,47 +16,85 @@ static int previous_fd;
  */
 char *_getline(const int fd)
 {
-	static char *remainder;  /* Static remainder from previous reads */
-	static int eof_flag; /* Static flag for EOF, 1 when n_read < READ_SIZE */
-	char *line = check_remainder(&remainder); /* Check for any remaining lines */
+	static char **remainder;
+	static int *fd_array, *eof_flag_array, nb_fd;
+	char *line;
 
-	if (fd != previous_fd)
-		if (remainder)
-		{
-			free(remainder);
-			remainder = NULL;
-			eof_flag = 0;
-			previous_fd = fd;
-			if (fd == -1)
-				return (NULL);
-		}
+	if (fd == -1)
+	{
+		int j;
+
+		for (j = 0; j < nb_fd; j++)
+			free(remainder[j]);
+		free(remainder), free(fd_array), free(eof_flag_array);
+		remainder = NULL, fd_array = NULL, eof_flag_array = NULL, nb_fd = 0;
+		return (NULL);
+	}
+
+	int array_index = update_fd_arrays(fd, &fd_array, &remainder,
+									   &eof_flag_array, &nb_fd);
+	if (array_index == -1)
+		return (NULL);
+
+	line = check_remainder(&remainder[array_index]);
 	if (line)
 		return (line);
 
-	if (eof_flag && !remainder)
-		return (NULL); /* Return NULL if EOF flag is set and no remainder */
+	if (eof_flag_array[array_index])
+	{
+		eof_flag_array[array_index] = 0;
+		if (nb_fd == 1)
+		{
+			free(remainder[array_index]);
+			nb_fd = 0;
+			_getline(-1);
+		}
 
-	/* Read new line from file descriptor */
-	return (read_line(fd, &remainder, &eof_flag));
+		return (NULL);
+	}
+
+	line = read_line(fd, &remainder[array_index], &eof_flag_array[array_index]);
+	return (line);
 }
 
-
 /**
- * find_newline - Finds the first occurrence of a newline character
- * in a string.
- * @str: The string to search.
- * Return: Pointer to the first occurrence of a newline character,
- * or NULL if none found.
+ * update_fd_arrays - Updates or initializes arrays for file descriptors.
+ * @fd: The file descriptor to add or update in the arrays.
+ * @fd_array: Pointer to the array of file descriptors.
+ * @remainder: Pointer to the array of remainders for each file descriptor.
+ * @eof_flag_array: Pointer to the array of EOF flags for each file descriptor.
+ * @nb_fd: Pointer to the number of file descriptors currently tracked.
+ * Return: On success,
+ * returns the index of the file descriptor in the fd_array.
+ *         On failure, returns -1.
  */
-char *find_newline(char *str)
+int update_fd_arrays(int fd, int **fd_array, char ***remainder,
+					 int **eof_flag_array, int *nb_fd)
 {
-	while (*str) /* Iterate through the string */
+	int i;
+
+	for (i = 0; i < *nb_fd; i++)
 	{
-		if (*str == '\n') /* Check for newline character */
-			return (str);
-		str++;
+		if ((*fd_array)[i] == fd)
+			return (i);
 	}
-	return (NULL);
+
+	*nb_fd += 1;
+	int *new_fd_array = realloc(*fd_array, sizeof(int) * (*nb_fd));
+	char **new_remainder = realloc(*remainder, sizeof(char *) * (*nb_fd));
+	int *new_eof_flag_array = realloc(*eof_flag_array, sizeof(int) * (*nb_fd));
+
+	if (!new_fd_array || !new_remainder || !new_eof_flag_array)
+		return (-1);
+
+	*fd_array = new_fd_array;
+	*remainder = new_remainder;
+	*eof_flag_array = new_eof_flag_array;
+
+	(*fd_array)[i] = fd;
+	(*remainder)[i] = NULL;
+	(*eof_flag_array)[i] = 0;
+	return (i);
 }
 
 /**
@@ -70,36 +107,31 @@ char *find_newline(char *str)
  */
 char *check_remainder(char **remainder)
 {
-	char *newline_pos, *line = NULL;
-
 	if (*remainder)
 	{
-		newline_pos = find_newline(*remainder); /* Find newline in remainder */
-		if (newline_pos) /* Split at the newline if found */
+		char *nl;
+
+		for (nl = *remainder; *nl; nl++)
 		{
-			size_t len = 0;
-			char *ptr;
-
-			/* Calculate the length of the string after the newline */
-			for (ptr = newline_pos + 1; *ptr; ptr++)
+			if (*nl == '\n')
 			{
-				len++;
+				*nl = '\0';
+				char *line = strdup(*remainder);
+				size_t len = strlen(nl + 1) + 1;
+
+				safe_move(*remainder, nl + 1, len);
+				return (line);
 			}
-
-			*newline_pos = '\0';
-			line = strdup(*remainder);
-			/* Move the string after the newline to the start of remainder */
-			safe_move(*remainder, newline_pos + 1, len + 1);
-
-			return (line);
 		}
+		char *line = strdup(*remainder);
 
-		line = strdup(*remainder); /* Copy remainder to line */
-		free(*remainder); /* Free old remainder */
+		free(*remainder);
 		*remainder = NULL;
+		return (line);
 	}
-	return (line);
+	return (NULL);
 }
+
 
 /**
  * read_line - Reads a line from a file descriptor.
@@ -118,37 +150,43 @@ char *read_line(const int fd, char **remainder, int *eof_flag)
 	ssize_t n_read;
 	size_t len = 0;
 
-
 	while (1)
 	{
-		char *newline_pos = NULL;
-
 		n_read = read(fd, buffer, READ_SIZE); /* Read chunk into buffer */
 
 		/* Check for end of file or read error */
 		if (n_read < READ_SIZE)
 		{
 			*eof_flag = 1; /* Set EOF indicator */
-			if (buffer[n_read - 1] == '\n')
+			if (n_read > 0 && buffer[n_read - 1] == '\n')
 				buffer[n_read - 1] = '\0';
 			if (n_read <= 0)
+			{
 				return (n_read == 0 ? line : NULL);
+			}
+
+
 		}
 
 		buffer[n_read] = '\0'; /* Null-terminate the read chunk */
 		append_buffer(&line, buffer, &len, n_read); /* Append chunk to line */
 
-		newline_pos = find_newline(line); /* Check for newline in line */
-
-		if (newline_pos) /* Split line at newline and prepare remainder */
+		/* Manually search for newline in the newly appended part of line */
+		for (char *ptr = line + len - n_read; *ptr; ptr++)
 		{
-			*newline_pos = '\0';
-			if (READ_SIZE != 1)
-				*remainder = strdup(newline_pos + 1);
-			return (line);
+			if (*ptr == '\n') /* Newline found */
+			{
+				*ptr = '\0'; /* Terminate the line here */
+				if (READ_SIZE != 1)
+				{
+					*remainder = strdup(ptr + 1); /* Prepare the remainder */
+				}
+				return (line);
+			}
 		}
 	}
 }
+
 
 /**
  * append_buffer - Appends a buffer to a dynamically growing line.
