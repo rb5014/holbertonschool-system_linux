@@ -19,6 +19,7 @@ char *_getline(const int fd)
 	static char **remainder;
 	static int *fd_array, *eof_flag_array, nb_fd;
 	char *line;
+	int array_index = 0;
 
 	if (fd == -1)
 	{
@@ -31,7 +32,7 @@ char *_getline(const int fd)
 		return (NULL);
 	}
 
-	int array_index = update_fd_arrays(fd, &fd_array, &remainder,
+	array_index = update_fd_arrays(fd, &fd_array, &remainder,
 									   &eof_flag_array, &nb_fd);
 	if (array_index == -1)
 		return (NULL);
@@ -71,7 +72,8 @@ char *_getline(const int fd)
 int update_fd_arrays(int fd, int **fd_array, char ***remainder,
 					 int **eof_flag_array, int *nb_fd)
 {
-	int i;
+	int *new_fd_array = NULL, *new_eof_flag_array = NULL, i = 0;
+	char **new_remainder = NULL;
 
 	for (i = 0; i < *nb_fd; i++)
 	{
@@ -80,9 +82,9 @@ int update_fd_arrays(int fd, int **fd_array, char ***remainder,
 	}
 
 	*nb_fd += 1;
-	int *new_fd_array = realloc(*fd_array, sizeof(int) * (*nb_fd));
-	char **new_remainder = realloc(*remainder, sizeof(char *) * (*nb_fd));
-	int *new_eof_flag_array = realloc(*eof_flag_array, sizeof(int) * (*nb_fd));
+	new_fd_array = realloc(*fd_array, sizeof(int) * (*nb_fd));
+	new_remainder = realloc(*remainder, sizeof(char *) * (*nb_fd));
+	new_eof_flag_array = realloc(*eof_flag_array, sizeof(int) * (*nb_fd));
 
 	if (!new_fd_array || !new_remainder || !new_eof_flag_array)
 		return (-1);
@@ -109,21 +111,24 @@ char *check_remainder(char **remainder)
 {
 	if (*remainder)
 	{
-		char *nl;
+		char *nl, *line = NULL;
 
 		for (nl = *remainder; *nl; nl++)
 		{
 			if (*nl == '\n')
 			{
+				size_t len = 0;
+
 				*nl = '\0';
-				char *line = strdup(*remainder);
-				size_t len = strlen(nl + 1) + 1;
+
+				line = strdup(*remainder);
+				len = strlen(nl + 1) + 1;
 
 				safe_move(*remainder, nl + 1, len);
 				return (line);
 			}
 		}
-		char *line = strdup(*remainder);
+		line = strdup(*remainder);
 
 		free(*remainder);
 		*remainder = NULL;
@@ -146,7 +151,7 @@ char *check_remainder(char **remainder)
 char *read_line(const int fd, char **remainder, int *eof_flag)
 {
 	static char buffer[READ_SIZE + 1]; /* Buffer for read chunks */
-	char *line = NULL;
+	char *line = NULL, *ptr = NULL;
 	ssize_t n_read;
 	size_t len = 0;
 
@@ -172,15 +177,13 @@ char *read_line(const int fd, char **remainder, int *eof_flag)
 		append_buffer(&line, buffer, &len, n_read); /* Append chunk to line */
 
 		/* Manually search for newline in the newly appended part of line */
-		for (char *ptr = line + len - n_read; *ptr; ptr++)
+		for (ptr = line + len - n_read; *ptr; ptr++)
 		{
 			if (*ptr == '\n') /* Newline found */
 			{
 				*ptr = '\0'; /* Terminate the line here */
 				if (READ_SIZE != 1)
-				{
 					*remainder = strdup(ptr + 1); /* Prepare the remainder */
-				}
 				return (line);
 			}
 		}
