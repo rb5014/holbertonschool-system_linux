@@ -55,9 +55,8 @@ try:
                             mem_file.seek(add_in_memory)
 
                             # Adjust the length of the replace string
-                            replace_string_padded = replace_string\
-                                + b'\x00' * (len(search_string)
-                                             - len(replace_string))
+                            replace_string_padded = replace_string + b'\x00' *\
+                                (len(search_string) - len(replace_string))
                             mem_file.write(replace_string_padded)
 
                         except Exception as e:
