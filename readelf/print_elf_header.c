@@ -154,7 +154,7 @@ void print_magic(ElfW(Ehdr) header)
 	int i;
 
 	printf("ELF Header:\n");
-	printf("\tMagic: ");
+	printf("  Magic: ");
 	printf("%02x ", header.e_ident[EI_MAG0]);
 	printf("%02x ", header.e_ident[EI_MAG1]);
 	printf("%02x ", header.e_ident[EI_MAG2]);
@@ -178,22 +178,22 @@ void print_magic(ElfW(Ehdr) header)
 void print_elf_header(ElfW(Ehdr) header)
 {
 	print_magic(header);
-	printf("\tClass: ELF%i\n", header.e_ident[EI_CLASS] == 1 ? 32 : 64);
-	printf("\tData: %i\n", header.e_ident[EI_DATA]);
-	printf("\tVersion: %i (current)\n", header.e_ident[EI_VERSION]);
-	printf("\tOS/ABI: UNIX (%s)\n", get_ABI(header));
-	printf("\tABI Version: %i\n", header.e_ident[EI_ABIVERSION]);
-	printf("\tType: %s\n", get_type(header));
-	printf("\tMachine: %s\n", get_machine(header));
-	printf("\tVersion: 0x%x\n", header.e_version);
-	printf("\tEntry point address: 0x%lx\n", header.e_entry);
-	printf("\tStart of program headers: %lu (bytes into file)\n", header.e_phoff);
-	printf("\tStart of section headers: %lu (bytes into file)\n", header.e_shoff);
-	printf("\tFlags: 0x%x\n", header.e_flags);
-	printf("\tSize of this header: %i (bytes)\n", header.e_ehsize);
-	printf("\tSize of program headers: %i (bytes)\n", header.e_phentsize);
-	printf("\tNumber of program headers: %i\n", header.e_phnum);
-	printf("\tSize of section headers: %i (bytes)\n", header.e_shentsize);
-	printf("\tNumber of section headers: %i\n", header.e_shnum);
-	printf("\tSection header string table index: %i\n", header.e_shstrndx);
+	printf("  Class: ELF%i\n", header.e_ident[EI_CLASS] == 1 ? 32 : 64);
+	printf("  Data: %i\n", header.e_ident[EI_DATA]);
+	printf("  Version: %i (current)\n", header.e_ident[EI_VERSION]);
+	printf("  OS/ABI: UNIX (%s)\n", get_ABI(header));
+	printf("  ABI Version: %i\n", header.e_ident[EI_ABIVERSION]);
+	printf("  Type: %s\n", get_type(header));
+	printf("  Machine: %s\n", get_machine(header));
+	printf("  Version: 0x%x\n", header.e_version);
+	printf("  Entry point address: 0x%lx\n", header.e_entry);
+	printf("  Start of program headers: %lu (bytes into file)\n", header.e_phoff);
+	printf("  Start of section headers: %lu (bytes into file)\n", header.e_shoff);
+	printf("  Flags: 0x%x\n", header.e_flags);
+	printf("  Size of this header: %i (bytes)\n", header.e_ehsize);
+	printf("  Size of program headers: %i (bytes)\n", header.e_phentsize);
+	printf("  Number of program headers: %i\n", header.e_phnum);
+	printf("  Size of section headers: %i (bytes)\n", header.e_shentsize);
+	printf("  Number of section headers: %i\n", header.e_shnum);
+	printf("  Section header string table index: %i\n", header.e_shstrndx);
 }
