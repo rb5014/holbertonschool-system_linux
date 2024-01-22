@@ -113,7 +113,7 @@ const char *get_machine(ElfW(Ehdr) header)
 		if (header.e_type == machine[i].value)
 			return (machine[i].name);
 	}
-	return ("");
+	return (NULL);
 }
 
 /**
@@ -166,15 +166,23 @@ void print_magic(ElfW(Ehdr) header)
  */
 void print_elf_header(ElfW(Ehdr) header)
 {
+	const char *ABI = ABI_list[header.e_ident[EI_OSABI]];
+	const char *type = get_type(header);
+	const char *machine = get_machine(header);
+
 	print_magic(header);
 	printf("  Class: ELF%i\n", header.e_ident[EI_CLASS] == 1 ? 32 : 64);
 	printf("  Data: 2's complement, %s endian\n",
 		   header.e_ident[EI_DATA] == 1 ? "little" : "big");
 	printf("  Version: %i (current)\n", header.e_ident[EI_VERSION]);
-	printf("  OS/ABI: UNIX (%s)\n", ABI_list[header.e_ident[EI_OSABI]]);
+
+	if (ABI)
+		printf("  OS/ABI: UNIX - %s\n", ABI);
+	else
+		printf("  OS/ABI: <unknown: %i> \n", header.e_ident[EI_OSABI]);
 	printf("  ABI Version: %i\n", header.e_ident[EI_ABIVERSION]);
-	printf("  Type: %s\n", get_type(header));
-	printf("  Machine: %s\n", get_machine(header));
+	printf("  Type: %s\n", type);
+	printf("  Machine: %s\n", machine);
 	printf("  Version: 0x%x\n", header.e_version);
 	printf("  Entry point address: 0x%lx\n", header.e_entry);
 	printf("  Start of program headers: %lu (bytes into file)\n", header.e_phoff);
