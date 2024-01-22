@@ -110,7 +110,7 @@ const char *get_machine(ElfW(Ehdr) header)
 
 	for (i = 0; i < sizeof(machine) / sizeof(machine[0]); i++)
 	{
-		if (header.e_type == machine[i].value)
+		if (header.e_machine == machine[i].value)
 			return (machine[i].name);
 	}
 	return (NULL);
@@ -143,7 +143,7 @@ void print_magic(ElfW(Ehdr) header)
 	int i;
 
 	printf("ELF Header:\n");
-	printf("  Magic: ");
+	printf("  Magic:   ");
 	printf("%02x ", header.e_ident[EI_MAG0]);
 	printf("%02x ", header.e_ident[EI_MAG1]);
 	printf("%02x ", header.e_ident[EI_MAG2]);
@@ -171,27 +171,27 @@ void print_elf_header(ElfW(Ehdr) header)
 	const char *machine = get_machine(header);
 
 	print_magic(header);
-	printf("  Class: ELF%i\n", header.e_ident[EI_CLASS] == 1 ? 32 : 64);
-	printf("  Data: 2's complement, %s endian\n",
+	printf("  Class:                             ELF%i\n", header.e_ident[EI_CLASS] == 1 ? 32 : 64);
+	printf("  Data:                              2's complement, %s endian\n",
 		   header.e_ident[EI_DATA] == 1 ? "little" : "big");
-	printf("  Version: %i (current)\n", header.e_ident[EI_VERSION]);
-
+	printf("  Version:                           %d (current)\n", header.e_ident[EI_VERSION]);
+ 
 	if (ABI)
-		printf("  OS/ABI: UNIX - %s\n", ABI);
+		printf("  OS/ABI:                            UNIX - %s\n", ABI);
 	else
-		printf("  OS/ABI: <unknown: %i> \n", header.e_ident[EI_OSABI]);
-	printf("  ABI Version: %i\n", header.e_ident[EI_ABIVERSION]);
-	printf("  Type: %s\n", type);
-	printf("  Machine: %s\n", machine);
-	printf("  Version: 0x%x\n", header.e_version);
-	printf("  Entry point address: 0x%lx\n", header.e_entry);
-	printf("  Start of program headers: %lu (bytes into file)\n", header.e_phoff);
-	printf("  Start of section headers: %lu (bytes into file)\n", header.e_shoff);
-	printf("  Flags: 0x%x\n", header.e_flags);
-	printf("  Size of this header: %i (bytes)\n", header.e_ehsize);
-	printf("  Size of program headers: %i (bytes)\n", header.e_phentsize);
-	printf("  Number of program headers: %i\n", header.e_phnum);
-	printf("  Size of section headers: %i (bytes)\n", header.e_shentsize);
-	printf("  Number of section headers: %i\n", header.e_shnum);
-	printf("  Section header string table index: %i\n", header.e_shstrndx);
+		printf("  OS/ABI: <unknown:              	 %u> \n", header.e_ident[EI_OSABI]);
+	printf("  ABI Version:                       %d\n", header.e_ident[EI_ABIVERSION]);
+	printf("  Type:                              %s\n", type);
+	printf("  Machine:                           %s\n", machine);
+	printf("  Version:                           0x%x\n", header.e_version);
+	printf("  Entry point address:               0x%lx\n", header.e_entry);
+	printf("  Start of program headers:          %lu (bytes into file)\n", header.e_phoff);
+	printf("  Start of section headers:          %lu (bytes into file)\n", header.e_shoff);
+	printf("  Flags:                             0x%x\n", header.e_flags);
+	printf("  Size of this header:               %u (bytes)\n", header.e_ehsize);
+	printf("  Size of program headers:           %u (bytes)\n", header.e_phentsize);
+	printf("  Number of program headers:         %u\n", header.e_phnum);
+	printf("  Size of section headers:           %u (bytes)\n", header.e_shentsize);
+	printf("  Number of section headers:         %u\n", header.e_shnum);
+	printf("  Section header string table index: %u\n", header.e_shstrndx);
 }
