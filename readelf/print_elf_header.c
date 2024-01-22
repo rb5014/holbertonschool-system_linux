@@ -80,8 +80,7 @@ static dict_t machine[] = {
 	{0xDC, "Zilog Z80"},
 	{0xF3, "RISC-V"},
 	{0xF7, "Berkeley Packet Filter"},
-	{0x101, "WDC 65C816"}
-};
+	{0x101, "WDC 65C816"}};
 
 static dict_t type[] = {
 	{ET_NONE, "NONE (Unknown)"},
@@ -92,8 +91,13 @@ static dict_t type[] = {
 	{ET_LOOS, "LOOS (Reserved inclusive range. Operating system specific.)"},
 	{ET_HIOS, "HIOS (Reserved inclusive range. Operating system specific.)"},
 	{ET_LOPROC, "LOPROC (Reserved inclusive range. Processor specific.)"},
-	{ET_HIPROC, "HIPROC (Reserved inclusive range. Processor specific.)"}
-};
+	{ET_HIPROC, "HIPROC (Reserved inclusive range. Processor specific.)"}};
+
+static char *ABI_list[] = {"System V", "HP-UX", "NetBSD", "Linux", "GNU Hurd",
+						   "", "Solaris", "AIX (Monterey)", "IRIX", "FreeBSD",
+						   "Tru64", "Novell Modesto", "OpenBSD", "OpenVMS",
+						   "NonStop Kernel", "AROS", "FenixOS", "Nuxi CloudABI",
+						   "Stratus Technologies OpenVOS"};
 /**
  * get_machine - Retrieves the machine type description based on the ELF header
  * @header: ELF header structure
@@ -131,21 +135,6 @@ const char *get_type(ElfW(Ehdr) header)
 }
 
 /**
- * get_ABI - Retrieves the ABI description based on the ELF header
- * @header: ELF header structure
- *
- * Return: A pointer to the ABI description string.
- */
-const char *get_ABI(ElfW(Ehdr) header)
-{
-	char *ABI_list[] = {"System V", "HP-UX", "NetBSD", "Linux", "GNU Hurd", "",
-						"Solaris", "AIX (Monterey)", "IRIX", "FreeBSD", "Tru64",
-						"Novell Modesto", "OpenBSD", "OpenVMS", "NonStop Kernel",
-						"AROS", "FenixOS", "Nuxi CloudABI", "Stratus Technologies OpenVOS"};
-	return (ABI_list[header.e_ident[EI_OSABI]]);
-}
-
-/**
  * print_magic - Prints the ELF magic values from the ELF header
  * @header: ELF header structure
  */
@@ -179,9 +168,10 @@ void print_elf_header(ElfW(Ehdr) header)
 {
 	print_magic(header);
 	printf("  Class: ELF%i\n", header.e_ident[EI_CLASS] == 1 ? 32 : 64);
-	printf("  Data: %i\n", header.e_ident[EI_DATA]);
+	printf("  Data: 2's complement, %s endian\n",
+		   header.e_ident[EI_DATA] == 1 ? "little" : "big");
 	printf("  Version: %i (current)\n", header.e_ident[EI_VERSION]);
-	printf("  OS/ABI: UNIX (%s)\n", get_ABI(header));
+	printf("  OS/ABI: UNIX (%s)\n", ABI_list[header.e_ident[EI_OSABI]]);
 	printf("  ABI Version: %i\n", header.e_ident[EI_ABIVERSION]);
 	printf("  Type: %s\n", get_type(header));
 	printf("  Machine: %s\n", get_machine(header));
