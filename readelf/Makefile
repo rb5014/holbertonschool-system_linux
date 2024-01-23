@@ -6,7 +6,7 @@ EXE = 0-hreadelf
 	$(CC) $(CFLAGS) *.c -o $(EXE)
 
 0-hreadelf_no_w: *.c
-	$(CC) *.c -o $(EXE) -lelf
+	$(CC) *.c -o $(EXE) -g
 
 
 tests:

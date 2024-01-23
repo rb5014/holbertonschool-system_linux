@@ -92,11 +92,28 @@ static dict_t type[] = {
 	{ET_LOPROC, "LOPROC (Reserved inclusive range. Processor specific.)"},
 	{ET_HIPROC, "HIPROC (Reserved inclusive range. Processor specific.)"}};
 
-static char *ABI_list[] = {"System V", "HP-UX", "NetBSD", "Linux", "GNU Hurd",
+static const char
+*ABI_elf64_list[] = {"System V", "HP-UX", "NetBSD", "Linux", "GNU Hurd",
 						   "", "Solaris", "AIX (Monterey)", "IRIX", "FreeBSD",
 						   "Tru64", "Novell Modesto", "OpenBSD", "OpenVMS",
 						   "NonStop Kernel", "AROS", "FenixOS", "Nuxi CloudABI",
 						   "Stratus Technologies OpenVOS"};
+
+/**
+ * get_elf64_ABI - Retrieves the OS ABI description
+ * based on the ELF header
+ * @header: ELF header structure
+ *
+ * Return: A pointer to the OS ABI description string.
+ */
+const char *get_elf64_ABI(Elf64_Ehdr header)
+{
+	size_t len_list_ABI = sizeof(ABI_elf64_list) / sizeof(ABI_elf64_list[0]);
+
+	if (header.e_ident[EI_OSABI] < len_list_ABI)
+		return (ABI_elf64_list[header.e_ident[EI_OSABI]]);
+	return (NULL);
+}
 
 /**
  * get_elf64_machine - Retrieves the machine type description
@@ -146,18 +163,11 @@ void print_elf64_magic(Elf64_Ehdr header)
 
 	printf("ELF Header:\n");
 	printf("  Magic:   ");
-	printf("%02x ", header.e_ident[EI_MAG0]);
-	printf("%02x ", header.e_ident[EI_MAG1]);
-	printf("%02x ", header.e_ident[EI_MAG2]);
-	printf("%02x ", header.e_ident[EI_MAG3]);
-	printf("%02x ", header.e_ident[EI_CLASS]);
-	printf("%02x ", header.e_ident[EI_DATA]);
-	printf("%02x ", header.e_ident[EI_VERSION]);
-	for (i = 0; i < 9; i++)
+	for (i = 0; i < 16; i++)
 	{
 		if (i > 0)
 			printf(" ");
-		printf("%02x", header.e_ident[EI_PAD]);
+		printf("%02x", header.e_ident[i]);
 	}
 	printf("\n");
 }
@@ -168,7 +178,7 @@ void print_elf64_magic(Elf64_Ehdr header)
  */
 void print_elf64_header(Elf64_Ehdr header)
 {
-	const char *ABI = ABI_list[header.e_ident[EI_OSABI]];
+	const char *ABI = get_elf64_ABI(header);
 	const char *type = get_elf64_type(header);
 	const char *machine = get_elf64_machine(header);
 
@@ -183,7 +193,7 @@ void print_elf64_header(Elf64_Ehdr header)
 	if (ABI)
 		printf("  OS/ABI:                            UNIX - %s\n", ABI);
 	else
-		printf("  OS/ABI:							 <unknown: %u>\n",
+		printf("  OS/ABI:							 <unknown: %x>\n",
 			   header.e_ident[EI_OSABI]);
 	printf("  ABI Version:                       %d\n",
 		   header.e_ident[EI_ABIVERSION]);

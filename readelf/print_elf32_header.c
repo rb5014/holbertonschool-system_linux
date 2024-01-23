@@ -1,5 +1,5 @@
 #include "main.h"
-static dict_t machine[] = {
+static dict_t elf32_machine[] = {
 	{0x00, "No specific instruction set"},
 	{0x01, "AT&T WE 32100"},
 	{0x02, "SPARC"},
@@ -81,7 +81,7 @@ static dict_t machine[] = {
 	{0xF7, "Berkeley Packet Filter"},
 	{0x101, "WDC 65C816"}};
 
-static dict_t type[] = {
+static dict_t elf32_type[] = {
 	{ET_NONE, "NONE (Unknown)"},
 	{ET_REL, "REL (Relocatable file)"},
 	{ET_EXEC, "EXEC (Executable file)"},
@@ -92,11 +92,27 @@ static dict_t type[] = {
 	{ET_LOPROC, "LOPROC (Reserved inclusive range. Processor specific.)"},
 	{ET_HIPROC, "HIPROC (Reserved inclusive range. Processor specific.)"}};
 
-static char *ABI_list[] = {"System V", "HP-UX", "NetBSD", "Linux", "GNU Hurd",
+static const char
+*ABI_elf32_list[] = {"System V", "HP-UX", "NetBSD", "Linux", "GNU Hurd",
 						   "", "Solaris", "AIX (Monterey)", "IRIX", "FreeBSD",
 						   "Tru64", "Novell Modesto", "OpenBSD", "OpenVMS",
 						   "NonStop Kernel", "AROS", "FenixOS", "Nuxi CloudABI",
 						   "Stratus Technologies OpenVOS"};
+/**
+ * get_elf32_ABI - Retrieves the OS ABI description
+ * based on the ELF header
+ * @header: ELF header structure
+ *
+ * Return: A pointer to the OS ABI description string.
+ */
+const char *get_elf32_ABI(Elf32_Ehdr header)
+{
+	size_t len_list_ABI = sizeof(ABI_elf32_list) / sizeof(ABI_elf32_list[0]);
+
+	if (header.e_ident[EI_OSABI] < len_list_ABI)
+		return (ABI_elf32_list[header.e_ident[EI_OSABI]]);
+	return (NULL);
+}
 
 /**
  * get_elf32_machine - Retrieves the machine type description
@@ -109,10 +125,10 @@ const char *get_elf32_machine(Elf32_Ehdr header)
 {
 	size_t i;
 
-	for (i = 0; i < sizeof(machine) / sizeof(machine[0]); i++)
+	for (i = 0; i < sizeof(elf32_machine) / sizeof(elf32_machine[0]); i++)
 	{
-		if (header.e_machine == machine[i].value)
-			return (machine[i].name);
+		if (header.e_machine == elf32_machine[i].value)
+			return (elf32_machine[i].name);
 	}
 	return (NULL);
 }
@@ -128,10 +144,10 @@ const char *get_elf32_type(Elf32_Ehdr header)
 {
 	size_t i;
 
-	for (i = 0; i < sizeof(type) / sizeof(type[0]); i++)
+	for (i = 0; i < sizeof(elf32_type) / sizeof(elf32_type[0]); i++)
 	{
-		if (header.e_type == type[i].value)
-			return (type[i].name);
+		if (header.e_type == elf32_type[i].value)
+			return (elf32_type[i].name);
 	}
 	return ("");
 }
@@ -146,18 +162,11 @@ void print_elf32_magic(Elf32_Ehdr header)
 
 	printf("ELF Header:\n");
 	printf("  Magic:   ");
-	printf("%02x ", header.e_ident[EI_MAG0]);
-	printf("%02x ", header.e_ident[EI_MAG1]);
-	printf("%02x ", header.e_ident[EI_MAG2]);
-	printf("%02x ", header.e_ident[EI_MAG3]);
-	printf("%02x ", header.e_ident[EI_CLASS]);
-	printf("%02x ", header.e_ident[EI_DATA]);
-	printf("%02x ", header.e_ident[EI_VERSION]);
-	for (i = 0; i < 9; i++)
+	for (i = 0; i < 16; i++)
 	{
 		if (i > 0)
 			printf(" ");
-		printf("%02x", header.e_ident[EI_PAD]);
+		printf("%02x", header.e_ident[i]);
 	}
 	printf("\n");
 }
@@ -168,7 +177,7 @@ void print_elf32_magic(Elf32_Ehdr header)
  */
 void print_elf32_header(Elf32_Ehdr header)
 {
-	const char *ABI = ABI_list[header.e_ident[EI_OSABI]];
+	const char *ABI = get_elf32_ABI(header);
 	const char *type = get_elf32_type(header);
 	const char *machine = get_elf32_machine(header);
 
@@ -183,7 +192,7 @@ void print_elf32_header(Elf32_Ehdr header)
 	if (ABI)
 		printf("  OS/ABI:                            UNIX - %s\n", ABI);
 	else
-		printf("  OS/ABI:							 <unknown: %u>\n",
+		printf("  OS/ABI:							 <unknown: %x>\n",
 			   header.e_ident[EI_OSABI]);
 	printf("  ABI Version:                       %d\n",
 		   header.e_ident[EI_ABIVERSION]);
