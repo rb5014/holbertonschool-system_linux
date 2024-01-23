@@ -169,7 +169,7 @@ void print_elf64_magic(Elf64_Ehdr header)
 			printf(" ");
 		printf("%02x", header.e_ident[i]);
 	}
-	printf("\n");
+	printf(" \n");
 }
 
 /**
@@ -193,7 +193,7 @@ void print_elf64_header(Elf64_Ehdr header)
 	if (ABI)
 		printf("  OS/ABI:                            UNIX - %s\n", ABI);
 	else
-		printf("  OS/ABI:							 <unknown: %x>\n",
+		printf("  OS/ABI:                            <unknown: %x>\n",
 			   header.e_ident[EI_OSABI]);
 	printf("  ABI Version:                       %d\n",
 		   header.e_ident[EI_ABIVERSION]);
