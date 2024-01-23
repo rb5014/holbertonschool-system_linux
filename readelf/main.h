@@ -2,14 +2,9 @@
 #define MAIN_H
 
 #include <elf.h>
+#include "inttypes.h"
 #include <stdio.h>
 #include <string.h>
-
-#if defined(__LP64__)
-#define ElfW(type) Elf64_##type
-#else
-#define ElfW(type) Elf32_##type
-#endif
 
 /**
  * struct dict_s - Represents a dictionary entry with an
@@ -29,11 +24,20 @@ typedef struct dict_s
 	const char *name;
 } dict_t;
 
-
 int main(int argc, char *argv[]);
-void print_elf_header(ElfW(Ehdr) header);
-void print_magic(ElfW(Ehdr) header);
-const char *get_ABI(ElfW(Ehdr) header);
-const char *get_type(ElfW(Ehdr) header);
+int get_elf_class(FILE *file);
+void choose_print_function(FILE *file, int elf_class);
+
+/* 32 bit */
+void print_elf32_header(Elf32_Ehdr header);
+void print_elf32_magic(Elf32_Ehdr header);
+const char *get_elf32_machine(Elf32_Ehdr header);
+const char *get_elf32_type(Elf32_Ehdr header);
+
+/* 64 bit */
+void print_elf64_header(Elf64_Ehdr header);
+void print_elf64_magic(Elf64_Ehdr header);
+const char *get_elf64_machine(Elf64_Ehdr header);
+const char *get_elf64_type(Elf64_Ehdr header);
 
 #endif

@@ -5,9 +5,13 @@ EXE = 0-hreadelf
 0-hreadelf: *.c
 	$(CC) $(CFLAGS) *.c -o $(EXE)
 
-run:
-	./$(EXE)
+0-hreadelf_no_w: *.c
+	$(CC) *.c -o $(EXE) -lelf
+
+
+tests:
+	./tests/test1.sh
 	
-.PHONY: clean
+.PHONY: clean tests
 clean:
 	rm -f ./$(EXE)

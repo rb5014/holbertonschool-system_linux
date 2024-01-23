@@ -1,10 +1,9 @@
 #include "main.h"
-
 static dict_t machine[] = {
 	{0x00, "No specific instruction set"},
 	{0x01, "AT&T WE 32100"},
 	{0x02, "SPARC"},
-	{0x03, "x86"},
+	{0x03, "Intel 80386"},
 	{0x04, "Motorola 68000 (M68k)"},
 	{0x05, "Motorola 88000 (M88k)"},
 	{0x06, "Intel MCU"},
@@ -56,7 +55,7 @@ static dict_t machine[] = {
 	{0x3B, "Toyota ME16 processor"},
 	{0x3C, "STMicroelectronics ST100 processor"},
 	{0x3D, "Advanced Logic Corp. TinyJ embedded processor family"},
-	{0x3E, "AMD x86-64"},
+	{0x3E, "Advanced Micro Devices X86-64"},
 	{0x3F, "Sony DSP Processor"},
 	{0x40, "Digital Equipment Corp. PDP-10"},
 	{0x41, "Digital Equipment Corp. PDP-11"},
@@ -86,7 +85,7 @@ static dict_t type[] = {
 	{ET_NONE, "NONE (Unknown)"},
 	{ET_REL, "REL (Relocatable file)"},
 	{ET_EXEC, "EXEC (Executable file)"},
-	{ET_DYN, "DYN (Shared object)"},
+	{ET_DYN, "DYN (Shared object file)"},
 	{ET_CORE, "CORE (Core file)"},
 	{ET_LOOS, "LOOS (Reserved inclusive range. Operating system specific.)"},
 	{ET_HIOS, "HIOS (Reserved inclusive range. Operating system specific.)"},
@@ -98,13 +97,15 @@ static char *ABI_list[] = {"System V", "HP-UX", "NetBSD", "Linux", "GNU Hurd",
 						   "Tru64", "Novell Modesto", "OpenBSD", "OpenVMS",
 						   "NonStop Kernel", "AROS", "FenixOS", "Nuxi CloudABI",
 						   "Stratus Technologies OpenVOS"};
+
 /**
- * get_machine - Retrieves the machine type description based on the ELF header
+ * get_elf32_machine - Retrieves the machine type description
+ * based on the ELF header
  * @header: ELF header structure
  *
  * Return: A pointer to the machine type description string.
  */
-const char *get_machine(ElfW(Ehdr) header)
+const char *get_elf32_machine(Elf32_Ehdr header)
 {
 	size_t i;
 
@@ -117,12 +118,13 @@ const char *get_machine(ElfW(Ehdr) header)
 }
 
 /**
- * get_type - Retrieves the ELF file type description based on the ELF header
+ * get_elf32_type - Retrieves the ELF file type description
+ * based on the ELF header
  * @header: ELF header structure
  *
  * Return: A pointer to the file type description string.
  */
-const char *get_type(ElfW(Ehdr) header)
+const char *get_elf32_type(Elf32_Ehdr header)
 {
 	size_t i;
 
@@ -135,10 +137,10 @@ const char *get_type(ElfW(Ehdr) header)
 }
 
 /**
- * print_magic - Prints the ELF magic values from the ELF header
+ * print_elf32_magic - Prints the ELF magic values from the ELF header
  * @header: ELF header structure
  */
-void print_magic(ElfW(Ehdr) header)
+void print_elf32_magic(Elf32_Ehdr header)
 {
 	int i;
 
@@ -161,37 +163,45 @@ void print_magic(ElfW(Ehdr) header)
 }
 
 /**
- * print_elf_header - Prints various information from the ELF header
+ * print_elf32_header - Prints various information from the ELF header
  * @header: ELF header structure
  */
-void print_elf_header(ElfW(Ehdr) header)
+void print_elf32_header(Elf32_Ehdr header)
 {
 	const char *ABI = ABI_list[header.e_ident[EI_OSABI]];
-	const char *type = get_type(header);
-	const char *machine = get_machine(header);
+	const char *type = get_elf32_type(header);
+	const char *machine = get_elf32_machine(header);
 
-	print_magic(header);
-	printf("  Class:                             ELF%i\n", header.e_ident[EI_CLASS] == 1 ? 32 : 64);
+	print_elf32_magic(header);
+	printf("  Class:                             ELF%i\n",
+		   header.e_ident[EI_CLASS] == 1 ? 32 : 64);
 	printf("  Data:                              2's complement, %s endian\n",
 		   header.e_ident[EI_DATA] == 1 ? "little" : "big");
-	printf("  Version:                           %d (current)\n", header.e_ident[EI_VERSION]);
- 
+	printf("  Version:                           %d (current)\n",
+		   header.e_ident[EI_VERSION]);
+
 	if (ABI)
 		printf("  OS/ABI:                            UNIX - %s\n", ABI);
 	else
-		printf("  OS/ABI: <unknown:              	 %u> \n", header.e_ident[EI_OSABI]);
-	printf("  ABI Version:                       %d\n", header.e_ident[EI_ABIVERSION]);
+		printf("  OS/ABI:							 <unknown: %u>\n",
+			   header.e_ident[EI_OSABI]);
+	printf("  ABI Version:                       %d\n",
+		   header.e_ident[EI_ABIVERSION]);
 	printf("  Type:                              %s\n", type);
 	printf("  Machine:                           %s\n", machine);
 	printf("  Version:                           0x%x\n", header.e_version);
-	printf("  Entry point address:               0x%lx\n", header.e_entry);
-	printf("  Start of program headers:          %lu (bytes into file)\n", header.e_phoff);
-	printf("  Start of section headers:          %lu (bytes into file)\n", header.e_shoff);
+	printf("  Entry point address:               0x%x\n", header.e_entry);
+	printf("  Start of program headers:          %d (bytes into file)\n",
+		   header.e_phoff);
+	printf("  Start of section headers:          %u (bytes into file)\n",
+		   header.e_shoff);
 	printf("  Flags:                             0x%x\n", header.e_flags);
 	printf("  Size of this header:               %u (bytes)\n", header.e_ehsize);
-	printf("  Size of program headers:           %u (bytes)\n", header.e_phentsize);
+	printf("  Size of program headers:           %u (bytes)\n",
+		   header.e_phentsize);
 	printf("  Number of program headers:         %u\n", header.e_phnum);
-	printf("  Size of section headers:           %u (bytes)\n", header.e_shentsize);
+	printf("  Size of section headers:           %u (bytes)\n",
+		   header.e_shentsize);
 	printf("  Number of section headers:         %u\n", header.e_shnum);
 	printf("  Section header string table index: %u\n", header.e_shstrndx);
 }
