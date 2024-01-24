@@ -1,4 +1,4 @@
-#include "main.h"
+#include "read-file-header.h"
 
 /**
  * convert_elf32_endianness - Convert endianness of fields
