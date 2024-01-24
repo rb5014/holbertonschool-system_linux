@@ -1,9 +1,9 @@
-#include "read-file-header.h"
+#include "read_sections_headers.h"
 
-static dict_t elf32_machine[] = {
+static dict_t machine[] = {
 	{0x00, "No specific instruction set"},
 	{0x01, "AT&T WE 32100"},
-	{0x02, "Sparc"},
+	{0x02, "SPARC"},
 	{0x03, "Intel 80386"},
 	{0x04, "Motorola 68000 (M68k)"},
 	{0x05, "Motorola 88000 (M88k)"},
@@ -82,7 +82,7 @@ static dict_t elf32_machine[] = {
 	{0xF7, "Berkeley Packet Filter"},
 	{0x101, "WDC 65C816"}};
 
-static dict_t elf32_type[] = {
+static dict_t type[] = {
 	{ET_NONE, "NONE (Unknown)"},
 	{ET_REL, "REL (Relocatable file)"},
 	{ET_EXEC, "EXEC (Executable file)"},
@@ -94,70 +94,71 @@ static dict_t elf32_type[] = {
 	{ET_HIPROC, "HIPROC (Reserved inclusive range. Processor specific.)"}};
 
 static const char
-*ABI_elf32_list[] = {"System V", "HP-UX", "NetBSD", "Linux", "GNU Hurd",
+*ABI_elf64_list[] = {"System V", "HP-UX", "NetBSD", "Linux", "GNU Hurd",
 						   "", "Solaris", "AIX (Monterey)", "IRIX", "FreeBSD",
 						   "Tru64", "Novell Modesto", "OpenBSD", "OpenVMS",
 						   "NonStop Kernel", "AROS", "FenixOS", "Nuxi CloudABI",
 						   "Stratus Technologies OpenVOS"};
+
 /**
- * get_elf32_ABI - Retrieves the OS ABI description
+ * get_elf64_ABI - Retrieves the OS ABI description
  * based on the ELF header
  * @header: ELF header structure
  *
  * Return: A pointer to the OS ABI description string.
  */
-const char *get_elf32_ABI(Elf32_Ehdr header)
+const char *get_elf64_ABI(Elf64_Ehdr header)
 {
-	size_t len_list_ABI = sizeof(ABI_elf32_list) / sizeof(ABI_elf32_list[0]);
+	size_t len_list_ABI = sizeof(ABI_elf64_list) / sizeof(ABI_elf64_list[0]);
 
 	if (header.e_ident[EI_OSABI] < len_list_ABI)
-		return (ABI_elf32_list[header.e_ident[EI_OSABI]]);
+		return (ABI_elf64_list[header.e_ident[EI_OSABI]]);
 	return (NULL);
 }
 
 /**
- * get_elf32_machine - Retrieves the machine type description
+ * get_elf64_machine - Retrieves the machine type description
  * based on the ELF header
  * @header: ELF header structure
  *
  * Return: A pointer to the machine type description string.
  */
-const char *get_elf32_machine(Elf32_Ehdr header)
+const char *get_elf64_machine(Elf64_Ehdr header)
 {
 	size_t i;
 
-	for (i = 0; i < sizeof(elf32_machine) / sizeof(elf32_machine[0]); i++)
+	for (i = 0; i < sizeof(machine) / sizeof(machine[0]); i++)
 	{
-		if (header.e_machine == elf32_machine[i].value)
-			return (elf32_machine[i].name);
+		if (header.e_machine == machine[i].value)
+			return (machine[i].name);
 	}
 	return (NULL);
 }
 
 /**
- * get_elf32_type - Retrieves the ELF file type description
+ * get_elf64_type - Retrieves the ELF file type description
  * based on the ELF header
  * @header: ELF header structure
  *
  * Return: A pointer to the file type description string.
  */
-const char *get_elf32_type(Elf32_Ehdr header)
+const char *get_elf64_type(Elf64_Ehdr header)
 {
 	size_t i;
 
-	for (i = 0; i < sizeof(elf32_type) / sizeof(elf32_type[0]); i++)
+	for (i = 0; i < sizeof(type) / sizeof(type[0]); i++)
 	{
-		if (header.e_type == elf32_type[i].value)
-			return (elf32_type[i].name);
+		if (header.e_type == type[i].value)
+			return (type[i].name);
 	}
 	return ("");
 }
 
 /**
- * print_elf32_magic - Prints the ELF magic values from the ELF header
+ * print_elf64_magic - Prints the ELF magic values from the ELF header
  * @header: ELF header structure
  */
-void print_elf32_magic(Elf32_Ehdr header)
+void print_elf64_magic(Elf64_Ehdr header)
 {
 	int i;
 
@@ -173,20 +174,20 @@ void print_elf32_magic(Elf32_Ehdr header)
 }
 
 /**
- * print_elf32_header - Prints various information from the ELF header
+ * print_elf64_header - Prints various information from the ELF header
  * @header: ELF header structure
  */
-void print_elf32_header(Elf32_Ehdr header)
+void print_elf64_header(Elf64_Ehdr header)
 {
-	const char *ABI = get_elf32_ABI(header);
-	const char *type = get_elf32_type(header);
-	const char *machine = get_elf32_machine(header);
+	const char *ABI = get_elf64_ABI(header);
+	const char *type = get_elf64_type(header);
+	const char *machine = get_elf64_machine(header);
 
-	print_elf32_magic(header);
+	print_elf64_magic(header);
 	printf("  Class:                             ELF%i\n",
 		   header.e_ident[EI_CLASS] == 1 ? 32 : 64);
 	printf("  Data:                              2's complement, %s endian\n",
-		   header.e_ident[EI_DATA] == 1 ? "little" : "big");
+		   header.e_ident[EI_DATA] == ELFDATA2LSB ? "little" : "big");
 	printf("  Version:                           %d (current)\n",
 		   header.e_ident[EI_VERSION]);
 
@@ -200,10 +201,10 @@ void print_elf32_header(Elf32_Ehdr header)
 	printf("  Type:                              %s\n", type);
 	printf("  Machine:                           %s\n", machine);
 	printf("  Version:                           0x%x\n", header.e_version);
-	printf("  Entry point address:               0x%x\n", header.e_entry);
-	printf("  Start of program headers:          %d (bytes into file)\n",
+	printf("  Entry point address:               0x%lx\n", header.e_entry);
+	printf("  Start of program headers:          %ld (bytes into file)\n",
 		   header.e_phoff);
-	printf("  Start of section headers:          %u (bytes into file)\n",
+	printf("  Start of section headers:          %lu (bytes into file)\n",
 		   header.e_shoff);
 	printf("  Flags:                             0x%x\n", header.e_flags);
 	printf("  Size of this header:               %u (bytes)\n", header.e_ehsize);

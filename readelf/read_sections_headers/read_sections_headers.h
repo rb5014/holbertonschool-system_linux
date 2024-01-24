@@ -1,5 +1,5 @@
-#ifndef READ_FILE_HEADER_H
-#define READ_FILE_HEADER_H
+#ifndef READ_SECTIONS_HEADERS_H
+#define READ_SECTIONS_HEADERS_H
 
 #include <elf.h>
 #include "inttypes.h"
@@ -25,7 +25,6 @@ typedef struct dict_s
 } dict_t;
 
 int main(int argc, char *argv[]);
-int get_elf_class(FILE *file);
 void choose_print_function(FILE *file, int elf_class, int endianness);
 void convert_elf32_endianness(Elf32_Ehdr *header32);
 void convert_elf64_endianness(Elf64_Ehdr *header64);
@@ -41,4 +40,4 @@ void print_elf64_magic(Elf64_Ehdr header);
 const char *get_elf64_machine(Elf64_Ehdr header);
 const char *get_elf64_type(Elf64_Ehdr header);
 
-#endif /* READ_FILE_HEADER_H */
+#endif /* READ_SECTIONS_HEADERS_H */

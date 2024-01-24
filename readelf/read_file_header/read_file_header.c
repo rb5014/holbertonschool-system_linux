@@ -1,4 +1,4 @@
-#include "read-file-header.h"
+#include "read_file_header.h"
 
 /**
  * convert_elf32_endianness - Convert endianness of fields
@@ -98,26 +98,6 @@ void choose_print_function(FILE *file, int elf_class, int endianness)
 	}
 	else
 		printf("Error class unkown\n");
-}
-
-/**
- * get_elf_class - Retrieves the ELF class (32-bit or 64-bit) from an ELF file.
- * @file: A pointer to the ELF file.
- *
- * This function reads the ELF identifier from the given file and returns
- * the ELF class (32-bit or 64-bit). It seeks back to the beginning of the file
- * after reading the ELF identifier to ensure proper file handling.
- *
- * Return: The ELF class (ELFCLASS32 or ELFCLASS64).
- */
-int get_elf_class(FILE *file)
-{
-	unsigned char ident[16];
-
-	/* Read ident to check elf class: 32 or 64*/
-	fread(&ident, sizeof(ident), 1, file);
-	fseek(file, 0, SEEK_SET);
-	return (ident[EI_CLASS]);
 }
 
 /**
