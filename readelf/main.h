@@ -26,8 +26,9 @@ typedef struct dict_s
 
 int main(int argc, char *argv[]);
 int get_elf_class(FILE *file);
-void choose_print_function(FILE *file, int elf_class);
-
+void choose_print_function(FILE *file, int elf_class, int endianness);
+void convert_elf32_endianness(Elf32_Ehdr *header32);
+void convert_elf64_endianness(Elf64_Ehdr *header64);
 /* 32 bit */
 void print_elf32_header(Elf32_Ehdr header);
 void print_elf32_magic(Elf32_Ehdr header);

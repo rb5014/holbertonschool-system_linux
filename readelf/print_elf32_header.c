@@ -2,7 +2,7 @@
 static dict_t elf32_machine[] = {
 	{0x00, "No specific instruction set"},
 	{0x01, "AT&T WE 32100"},
-	{0x02, "SPARC"},
+	{0x02, "Sparc"},
 	{0x03, "Intel 80386"},
 	{0x04, "Motorola 68000 (M68k)"},
 	{0x05, "Motorola 88000 (M88k)"},
