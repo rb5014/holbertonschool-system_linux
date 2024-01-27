@@ -1,6 +1,6 @@
 #include "read_file_header.h"
 
-static dict_t elf32_machine[] = {
+static dict_t32 elf32_machine[] = {
 	{0x00, "No specific instruction set"},
 	{0x01, "AT&T WE 32100"},
 	{0x02, "Sparc"},
@@ -82,7 +82,7 @@ static dict_t elf32_machine[] = {
 	{0xF7, "Berkeley Packet Filter"},
 	{0x101, "WDC 65C816"}};
 
-static dict_t elf32_type[] = {
+static dict_t32 elf32_type[] = {
 	{ET_NONE, "NONE (Unknown)"},
 	{ET_REL, "REL (Relocatable file)"},
 	{ET_EXEC, "EXEC (Executable file)"},

@@ -1,4 +1,6 @@
 .vscode
+*/.vscode
+readelf/*-hreadelf
 hls
 build.sh
-*/test/
+*/test*/

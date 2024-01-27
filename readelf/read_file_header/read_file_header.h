@@ -22,7 +22,7 @@ typedef struct dict_s
 {
 	int value;
 	const char *name;
-} dict_t;
+} dict_t32;
 
 int main(int argc, char *argv[]);
 void choose_print_function(FILE *file, int elf_class, int endianness);
