@@ -173,10 +173,10 @@ void print_elf32_magic(Elf32_Ehdr header)
 }
 
 /**
- * print_elf32_header - Prints various information from the ELF header
+ * print_elf32_file_header - Prints various information from the ELF header
  * @header: ELF header structure
  */
-void print_elf32_header(Elf32_Ehdr header)
+void print_elf32_file_header(Elf32_Ehdr header)
 {
 	const char *ABI = get_elf32_ABI(header);
 	const char *type = get_elf32_type(header);

@@ -174,10 +174,10 @@ void print_elf64_magic(Elf64_Ehdr header)
 }
 
 /**
- * print_elf64_header - Prints various information from the ELF header
+ * print_elf64_file_header - Prints various information from the ELF header
  * @header: ELF header structure
  */
-void print_elf64_header(Elf64_Ehdr header)
+void print_elf64_file_header(Elf64_Ehdr header)
 {
 	const char *ABI = get_elf64_ABI(header);
 	const char *type = get_elf64_type(header);

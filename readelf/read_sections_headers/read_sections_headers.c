@@ -1,66 +1,6 @@
 #include "read_sections_headers.h"
 
 /**
- * convert_elf32_endianness - Convert endianness of fields
- *							  in a 32-bit ELF header.
- * @header32: Pointer to the 32-bit ELF header structure to be converted.
- *
- * This function swaps the endianness of various fields
- * in the given ELF header, ensuring proper interpretation
- * on systems with different endianness.
- * Elf32_Half => uint16_t
- * Elf32_Word => uint32_t
- * Elf32_Addr => uint32_t
- * Elf32_Off => uint32_t
- */
-void convert_elf32_endianness(Elf32_Ehdr *header32)
-{
-	header32->e_type = __builtin_bswap16(header32->e_type);
-	header32->e_machine = __builtin_bswap16(header32->e_machine);
-	header32->e_version = __builtin_bswap32(header32->e_version);
-	header32->e_entry = __builtin_bswap32(header32->e_entry);
-	header32->e_phoff = __builtin_bswap32(header32->e_phoff);
-	header32->e_shoff = __builtin_bswap32(header32->e_shoff);
-	header32->e_flags = __builtin_bswap32(header32->e_flags);
-	header32->e_ehsize = __builtin_bswap16(header32->e_ehsize);
-	header32->e_phentsize = __builtin_bswap16(header32->e_phentsize);
-	header32->e_phnum = __builtin_bswap16(header32->e_phnum);
-	header32->e_shentsize = __builtin_bswap16(header32->e_shentsize);
-	header32->e_shnum = __builtin_bswap16(header32->e_shnum);
-	header32->e_shstrndx = __builtin_bswap16(header32->e_shstrndx);
-
-}
-/**
- * convert_elf64_endianness - Convert endianness of fields
- *							  in a 64-bit ELF header.
- * @header64: Pointer to the 64-bit ELF header structure to be converted.
- *
- * This function swaps the endianness of various fields
- * in the given ELF header, ensuring proper interpretation
- * on systems with different endianness.
- * Elf64_Half => uint16_t
- * Elf64_Word => uint32_t
- * Elf64_Addr => uint64_t
- * Elf64_Off => uint64_t
- */
-void convert_elf64_endianness(Elf64_Ehdr *header64)
-{
-	header64->e_type = __builtin_bswap16(header64->e_type);
-	header64->e_machine = __builtin_bswap16(header64->e_machine);
-	header64->e_version = __builtin_bswap32(header64->e_version);
-	header64->e_entry = __builtin_bswap64(header64->e_entry);
-	header64->e_phoff = __builtin_bswap64(header64->e_phoff);
-	header64->e_shoff = __builtin_bswap64(header64->e_shoff);
-	header64->e_flags = __builtin_bswap32(header64->e_flags);
-	header64->e_ehsize = __builtin_bswap16(header64->e_ehsize);
-	header64->e_phentsize = __builtin_bswap16(header64->e_phentsize);
-	header64->e_phnum = __builtin_bswap16(header64->e_phnum);
-	header64->e_shentsize = __builtin_bswap16(header64->e_shentsize);
-	header64->e_shnum = __builtin_bswap16(header64->e_shnum);
-	header64->e_shstrndx = __builtin_bswap16(header64->e_shstrndx);
-}
-
-/**
  * choose_print_function - Determines the ELF class and calls the appropriate
  *                        ELF header printing function.
  * @file: A pointer to the ELF file.
@@ -80,21 +20,43 @@ void choose_print_function(FILE *file, int elf_class, int endianness)
 	/* system compiles in 32-bit, so even if elf class is 64 it doest matter */
 	if ((elf_class == ELFCLASS32) || (sizeof(void *) == 4))
 	{
-		Elf32_Ehdr header32;
+		Elf32_Off e_shoff;
+		Elf32_Half e_shentsize;
+		Elf32_Half e_shnum;
+		Elf32_Half e_shstrndx;
+		Elf32_Shdr *s_hdrs32;
+		char **s_names, **s_types, **s_flags;
 
-		fread(&header32, sizeof(header32), 1, file);
-		if (endianness == ELFDATA2MSB)
-			convert_elf32_endianness(&header32);
-		print_elf32_header(header32);
+		get_elf32_s_hdrs_info(file, endianness, &e_shoff, &e_shentsize, &e_shnum,
+							  &e_shstrndx);
+
+		s_hdrs32 = get_all_elf32_s_headers(file, endianness,
+										   e_shoff, e_shentsize, e_shnum);
+		s_names = get_elf32_s_names(file, endianness, s_hdrs32, e_shoff, e_shentsize, e_shnum,
+								e_shstrndx);
+		s_types = get_elf32_s_types(s_hdrs32, e_shnum);
+		s_flags = get_elf32_s_flags(s_hdrs32, e_shnum);
+
+		print_elf32_sections_headers(file, s_hdrs32, e_shoff, e_shentsize, e_shnum,
+									 e_shstrndx, s_names, s_types, s_flags);
+		free_array(&s_names, e_shnum);
+		free_array(&s_types, e_shnum);
 	}
 	else if ((elf_class == ELFCLASS64) && (sizeof(void *) == 8))
 	{
-		Elf64_Ehdr header64;
+		Elf64_Off e_shoff;
+		Elf64_Half e_shentsize;
+		Elf64_Half e_shnum;
+		Elf64_Half e_shstrndx;
+		Elf64_Shdr *s_hdrs64;
 
-		fread(&header64, sizeof(header64), 1, file);
-		if (endianness == ELFDATA2MSB)
-			convert_elf64_endianness(&header64);
-		print_elf64_header(header64);
+		get_elf64_s_hdrs_info(file, endianness, &e_shoff, &e_shentsize, &e_shnum,
+							  &e_shstrndx);
+
+		s_hdrs64 = get_all_elf64_s_headers(file, endianness,
+										   e_shoff, e_shentsize, e_shnum);
+
+		print_elf64_sections_headers(s_hdrs64, e_shoff, e_shnum, e_shstrndx);
 	}
 	else
 		printf("Error class unkown\n");
@@ -127,7 +89,7 @@ int main(int argc, char *argv[])
 	if (argc < 2)
 	{
 		printf("Usage: ./1-hreadelf prog_path\n");
-		return (-1);
+		argv[1] = "./tests/exe/solaris32";
 	}
 
 
@@ -138,7 +100,7 @@ int main(int argc, char *argv[])
 
 
 	/* Read ident to check elf class: 32 or 64, and endianness : little or big */
-	fread(&ident, sizeof(ident), 1, file);
+	fread(&ident, 1, sizeof(ident), file);
 	fseek(file, 0, SEEK_SET);
 	elf_class = ident[EI_CLASS];
 	endianness = ident[EI_DATA];
