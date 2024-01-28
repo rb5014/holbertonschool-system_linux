@@ -37,7 +37,7 @@ void get_elf64_s_hdrs_info(FILE *file, Elf64_Ehdr *f_hdr64)
 	fseek(file, 0, SEEK_SET);
 	if (f_hdr64->e_ident[EI_DATA] == ELFDATA2MSB)
 	{
-		f_hdr64->e_shoff = __builtin_bswap32(f_hdr64->e_shoff);
+		f_hdr64->e_shoff = __builtin_bswap64(f_hdr64->e_shoff);
 		f_hdr64->e_shentsize = __builtin_bswap16(f_hdr64->e_shentsize);
 		f_hdr64->e_shnum = __builtin_bswap16(f_hdr64->e_shnum);
 		f_hdr64->e_shstrndx = __builtin_bswap16(f_hdr64->e_shstrndx);
