@@ -52,9 +52,11 @@ char **get_elf32_p_types(Elf32_Phdr *p_hdrs32, Elf32_Half e_phnum)
 				break;
 			}
 		}
-		if ((strcmp(program_types[i], "NULL") == 0) && ((p_hdrs32[i].p_type & PT_LOOS) == PT_LOOS))
+		if ((strcmp(program_types[i], "NULL") == 0) &&
+			((p_hdrs32[i].p_type & PT_LOOS) == PT_LOOS))
 		{
-			program_types[i] = realloc(program_types[i], sizeof(char *) * (strlen("LOOS") + 8 + 1));
+			program_types[i] = realloc(program_types[i],
+								   sizeof(char *) * (strlen("LOOS") + 8 + 1));
 			sprintf(program_types[i], "LOOS+%x", p_hdrs32[i].p_type - PT_LOOS);
 		}
 	}
@@ -91,9 +93,11 @@ char **get_elf64_p_types(Elf64_Phdr *p_hdrs64, Elf64_Half e_phnum)
 				break;
 			}
 		}
-		if ((strcmp(program_types[i], "NULL") == 0) && ((p_hdrs64[i].p_type & PT_LOOS) == PT_LOOS))
+		if ((strcmp(program_types[i], "NULL") == 0) &&
+			((p_hdrs64[i].p_type & PT_LOOS) == PT_LOOS))
 		{
-			program_types[i] = realloc(program_types[i], sizeof(char *) * (strlen("LOOS") + 8 + 1));
+			program_types[i] = realloc(program_types[i],
+									sizeof(char *) * (strlen("LOOS") + 8 + 1));
 			sprintf(program_types[i], "LOOS+%x", p_hdrs64[i].p_type - PT_LOOS);
 		}
 	}

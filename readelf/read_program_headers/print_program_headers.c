@@ -6,7 +6,9 @@
  * @p_hdrs32: Array of 32-bit program headers.
  * @types: Array of program types.
  * @flags: Array of program flags.
- *
+ * @interp_path: String containing the interpreter path.
+ * @segment_s_names: Array of arrays of strings containing the name of sections
+ * of each segment
  * This function prints various information from the program headers
  * for 32-bit ELF files.
  */
@@ -58,7 +60,9 @@ void print_elf32_p_hdrs(Elf32_Ehdr f_hdr32, Elf32_Phdr *p_hdrs32,
  * @p_hdrs64: Array of ELF64_Phdr structures.
  * @types: Array of ELF64 program types.
  * @flags: Array of ELF64 program flags.
- *
+ * @interp_path: String containing the interpreter path.
+ * @segment_s_names: Array of arrays of strings containing the name of sections
+ * of each segment
  * Prints various information from ELF64 program headers.
  */
 void print_elf64_p_hdrs(Elf64_Ehdr f_hdr64, Elf64_Phdr *p_hdrs64,
