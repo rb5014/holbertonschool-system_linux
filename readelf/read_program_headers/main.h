@@ -69,10 +69,16 @@ char **get_elf64_p_types(Elf64_Phdr *p_hdrs64, Elf64_Half e_phnum);
 
 char *get_elf32_interp_path(FILE *file, Elf32_Phdr *p_hdrs32,
 						    Elf32_Half e_phnum);
+char *get_elf64_interp_path(FILE *file, Elf64_Phdr *p_hdrs64,
+							Elf64_Half e_phnum);
 
 char ***get_elf32_segments_s_names(FILE *file, Elf32_Ehdr f_hdr32,
 									    Elf32_Phdr *p_hdrs32);
+char ***get_elf64_segments_s_names(FILE *file, Elf64_Ehdr f_hdr64,
+								   Elf64_Phdr *p_hdrs64);
+
 char **get_elf32_s_names(FILE *file, Elf32_Ehdr f_hdr32, Elf32_Shdr *s_hdrs32);
+char **get_elf64_s_names(FILE *file, Elf64_Ehdr f_hdr64, Elf64_Shdr *s_hdrs64);
 
 char **get_elf32_p_flags(Elf32_Phdr *p_hdrs32, Elf32_Half e_phnum);
 char **get_elf64_p_flags(Elf64_Phdr *p_hdrs64, Elf64_Half e_phnum);
@@ -80,5 +86,5 @@ char **get_elf64_p_flags(Elf64_Phdr *p_hdrs64, Elf64_Half e_phnum);
 void print_elf32_p_hdrs(Elf32_Ehdr f_hdr32, Elf32_Phdr *p_hdrs32,
 						char **types, char **flags, char *interp_path, char ***segment_s_names);
 void print_elf64_p_hdrs(Elf64_Ehdr f_hdr64, Elf64_Phdr *p_hdrs64,
-						char **types, char **flags);
+						char **types, char **flags, char *interp_path, char ***segment_s_names);
 #endif /* READ_PROGRAM_HEADERS_H */

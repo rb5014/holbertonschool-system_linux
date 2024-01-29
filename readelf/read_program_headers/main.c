@@ -45,7 +45,10 @@ void choose_print_function(FILE *file, int elf_class)
 		p_hdrs64 = get_all_elf64_p_hdrs(file, f_hdr64);
 		p_types = get_elf64_p_types(p_hdrs64, f_hdr64.e_phnum);
 		p_flags = get_elf64_p_flags(p_hdrs64, f_hdr64.e_phnum);
-		print_elf64_p_hdrs(f_hdr64, p_hdrs64, p_types, p_flags);
+		interp_path = get_elf64_interp_path(file, p_hdrs64, f_hdr64.e_phnum);
+		segments_s_names = get_elf64_segments_s_names(file, f_hdr64, p_hdrs64);
+		print_elf64_p_hdrs(f_hdr64, p_hdrs64, p_types, p_flags, interp_path,
+						   segments_s_names);
 
 		free_array(&p_types, f_hdr64.e_phnum);
 		free_array(&p_flags, f_hdr64.e_phnum);
