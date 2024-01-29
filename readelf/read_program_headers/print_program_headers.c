@@ -15,6 +15,11 @@ void print_elf32_p_hdrs(Elf32_Ehdr f_hdr32, Elf32_Phdr *p_hdrs32,
 {
 	unsigned int i, j;
 
+	if (f_hdr32.e_phnum == 0)
+	{
+		printf("\nThere are no program headers in this file.\n");
+		return;
+	}
 	printf("\nElf file type is %s\n", get_elf32_type(f_hdr32));
 	printf("Entry point 0x%x\n", f_hdr32.e_entry);
 	printf("There are %u program headers, starting at offset %u\n\n",

@@ -80,7 +80,7 @@ int main(int argc, char *argv[])
 	if (argc < 2)
 	{
 		printf("Usage: ./2-hreadelf prog_path\n");
-		argv[1] = "./tests/exe/solaris32";
+		argv[1] = "./tests/exe/sparcbigendian32";
 	}
 
 

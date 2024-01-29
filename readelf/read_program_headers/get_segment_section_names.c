@@ -35,12 +35,17 @@ char ***get_elf32_segments_s_names(FILE *file, Elf32_Ehdr f_hdr32,
 {
 	char ***segments_s_names = malloc(sizeof(char **) * f_hdr32.e_phnum);
 	char **s_names;
-	Elf32_Shdr s_hdrs32[f_hdr32.e_shnum];
-	unsigned int i, j, k, cur_nb_names;
+	Elf32_Shdr *s_hdrs32 = malloc(sizeof(Elf32_Shdr) * f_hdr32.e_shnum);
+	unsigned int i, j, cur_nb_names;
 
 	fseek(file, f_hdr32.e_shoff, SEEK_SET);
 	fread(s_hdrs32, sizeof(Elf32_Shdr), f_hdr32.e_shnum, file);
 
+	if (f_hdr32.e_ident[EI_DATA] == ELFDATA2MSB)
+	{
+		for (i = 0; i < f_hdr32.e_shnum; i++)
+			convert_elf32_s_hdr_endianness(&s_hdrs32[i]);
+	}
 	s_names = get_elf32_s_names(file, f_hdr32, s_hdrs32);
 
 	for (i = 0; i < f_hdr32.e_phnum; i++)
@@ -51,7 +56,7 @@ char ***get_elf32_segments_s_names(FILE *file, Elf32_Ehdr f_hdr32,
 		segments_s_names[i][1] = NULL;
 		for (j = 0; j < f_hdr32.e_shnum; j++)
 		{
-			if ((s_hdrs32[j].sh_addr >= p_hdrs32[i].p_vaddr) &&
+			if (s_hdrs32[j].sh_addr && s_hdrs32[j].sh_size && (s_hdrs32[j].sh_addr >= p_hdrs32[i].p_vaddr) &&
 				(s_hdrs32[j].sh_addr < (p_hdrs32[i].p_vaddr + p_hdrs32[i].p_memsz)))
 			{
 				cur_nb_names++;
@@ -62,7 +67,7 @@ char ***get_elf32_segments_s_names(FILE *file, Elf32_Ehdr f_hdr32,
 			}
 		}
 	}
-
+	free(s_hdrs32);
 	free_array(&s_names, f_hdr32.e_shnum);
 	return (segments_s_names);
 }
