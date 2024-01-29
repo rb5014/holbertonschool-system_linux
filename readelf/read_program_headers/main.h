@@ -51,6 +51,9 @@ void free_array(char ***array, uint16_t num);
 void get_elf32_f_hdr(FILE *file, Elf32_Ehdr *f_hdr32);
 void get_elf64_f_hdr(FILE *file, Elf64_Ehdr *f_hdr64);
 
+const char *get_elf32_type(Elf32_Ehdr header);
+const char *get_elf64_type(Elf64_Ehdr header);
+
 Elf32_Phdr *get_all_elf32_p_hdrs(FILE *file, Elf32_Ehdr f_hdr32);
 Elf64_Phdr *get_all_elf64_p_hdrs(FILE *file, Elf64_Ehdr f_hdr64);
 
@@ -58,6 +61,8 @@ void convert_elf32_p_hdr_endianness(Elf32_Phdr *p_hdr32);
 void convert_elf64_p_hdr_endianness(Elf64_Phdr *p_hdr64);
 void convert_elf32_s_hdr_endianness(Elf32_Shdr *s_hdr32);
 void convert_elf64_s_hdr_endianness(Elf64_Shdr *s_hdr64);
+void convert_elf32_file_header_endianness(Elf32_Ehdr *file_hdr32);
+void convert_elf64_file_header_endianness(Elf64_Ehdr *file_hdr64);
 
 char **get_elf32_p_types(Elf32_Phdr *p_hdrs32, Elf32_Half e_phnum);
 char **get_elf64_p_types(Elf64_Phdr *p_hdrs64, Elf64_Half e_phnum);
