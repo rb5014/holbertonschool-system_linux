@@ -17,7 +17,7 @@ asm_strcmp:
 		jb .end_2
 	.end_0:
 		cmp bl, 0
-		jne .end_1
+		jne .end_2
 		mov rax, 0
 		ret
 	.end_1:
