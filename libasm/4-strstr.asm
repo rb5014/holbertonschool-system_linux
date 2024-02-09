@@ -10,8 +10,8 @@ asm_strstr:              ; Start of the asm_strstr function
 	; Outputs:
 	;   rax: pointer to the first occurrence of the character, or NULL if not found
 mov rax, 0
-test rsi, 0
-jz .found_string
+cmp byte [rsi], 0
+je .found_string
 cmp rdi, rsi
 jb .not_found
 
@@ -42,11 +42,6 @@ jb .not_found
 
 	inc rdi
 	jmp .loop
-
-
-
-
-
 
 .found_string:           ; Label for string found
 	mov rax, rdi      ; Move the pointer to the first char of found string into RAX
