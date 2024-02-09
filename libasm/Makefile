@@ -1,20 +1,20 @@
 
 
 main_obj:
-	@gcc -Wall -Wextra -Werror -pedantic -g3 -c tests/3-main.c -o tests/3-main.o -I.
+	@gcc -Wall -Wextra -Werror -pedantic -g3 -c tests/4-main.c -o tests/4-main.o -I.
 
 asm_obj:
-	@nasm -f elf64 -o tests/3-strchr.o 3-strchr.asm
+	@nasm -f elf64 -o tests/4-strstr.o 4-strstr.asm
 
 all: main_obj asm_obj
-	@gcc tests/3-main.o tests/3-strchr.o -o 3-strchr
+	@gcc tests/4-main.o tests/4-strstr.o -o 4-strstr
 	@make clean
 
-3-strchr: all
-	./3-strchr
-	@rm -f ./3-strchr
+4-strstr: all
+	./4-strstr
+	@rm -f ./4-strstr
 
-.PHONY: clean 3-strchr
+.PHONY: clean 4-strstr
 
 clean:
 	rm -f tests/*.o
