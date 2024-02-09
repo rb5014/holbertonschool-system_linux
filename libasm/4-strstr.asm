@@ -10,6 +10,9 @@ asm_strstr:              ; Start of the asm_strstr function
 	; Outputs:
 	;   rax: pointer to the first occurrence of the character, or NULL if not found
 mov rax, 0
+cmp rdi, rsi
+jb .not_found
+
 .loop:                   ; Start of the loop to iterate through the string
 	mov rcx, 0
 	mov al, byte [rdi]   ; Load byte from the string into AL
@@ -28,9 +31,10 @@ mov rax, 0
 	inc rcx
 	mov al, byte [rdi + rcx]
 	mov bl, byte [rsi + rcx]
-	test al, bl
+	test bl, bl
 	jz .found_string
-	
+
+
 	cmp al, bl
 	je .loop_found_char
 

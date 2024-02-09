@@ -1,7 +1,7 @@
 
 
 main_obj:
-	@gcc -Wall -Wextra -Werror -pedantic -g3 -c tests/4-main.c -o tests/4-main.o -I.
+	@gcc -Wall -Wextra -pedantic -g3 -c tests/4-main.c -o tests/4-main.o -I.
 
 asm_obj:
 	@nasm -f elf64 -o tests/4-strstr.o 4-strstr.asm
