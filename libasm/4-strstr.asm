@@ -6,9 +6,9 @@ section .text            ; Start the text section
 asm_strstr:              ; Start of the asm_strstr function
 	; Inputs:
 	;   rdi: pointer to the string
-	;   sil: character to search for (lower 8 bits of rdi)
+	;   rsi: string to search for
 	; Outputs:
-	;   rax: pointer to the first occurrence of the character, or NULL if not found
+	;   rax: pointer to the first char of the first occurrence of the string, or NULL if not found
 mov rax, 0
 cmp byte [rsi], 0
 je .found_string
