@@ -1,5 +1,5 @@
-SRC_ASM = 6-putc.asm
-SRC_MAIN = tests/6-main.c
+SRC_ASM = 7-puts.asm
+SRC_MAIN = tests/7-main.c
 
 all: main_obj asm_obj
 	gcc *.o
@@ -9,6 +9,7 @@ main_obj:
 	gcc -Wall -Wextra -pedantic -g3 -c $(SRC_MAIN) -I.
 
 asm_obj:
+	nasm -f elf64 -o 0-strlen.o 0-strlen.asm
 	nasm -f elf64 $(SRC_ASM)
 
 run: all
