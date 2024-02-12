@@ -1,19 +1,21 @@
+SRC_ASM = 6-putc.asm
+SRC_MAIN = tests/6-main.c
 
 all: main_obj asm_obj
-	@gcc tests/5-main.o tests/5-memcpy.o -o 5-memcpy
-	@make clean
+	gcc *.o
+	make clean
 
 main_obj:
-	@gcc -Wall -Wextra -pedantic -g3 -c tests/5-main.c -o tests/5-main.o -I.
+	gcc -Wall -Wextra -pedantic -g3 -c $(SRC_MAIN) -I.
 
 asm_obj:
-	@nasm -f elf64 -o tests/5-memcpy.o 5-memcpy.asm
+	nasm -f elf64 $(SRC_ASM)
 
-5-memcpy: all
-	./5-memcpy
-	@rm -f ./5-memcpy
+run: all
+	$(EXE)
+	rm -f $(EXE)
 
-.PHONY: clean 5-memcpy
+.PHONY: clean
 
 clean:
-	rm -f tests/*.o
+	rm -f *.o $(EXE)
