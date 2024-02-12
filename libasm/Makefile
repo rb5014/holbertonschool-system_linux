@@ -1,9 +1,9 @@
-SRC_ASM = 8-strcasecmp.asm
-SRC_MAIN = tests/8-main.c
+SRC_ASM = ./9-strncasecmp.asm
+SRC_MAIN = tests/9-main.c
 
 all: main_obj asm_obj
 	gcc *.o
-	make clean
+	rm -f *.o $(EXE)
 
 main_obj:
 	gcc -Wall -Wextra -pedantic -g3 -c $(SRC_MAIN) -I.
