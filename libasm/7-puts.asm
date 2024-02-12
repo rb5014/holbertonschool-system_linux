@@ -5,7 +5,7 @@ section .text            ; Start the text section
 
 asm_puts:              ; Start of the asm_memcpy function
 	; Inputs:
-	;   rdi: char to print
+	;   rdi: chars to print
     ; Set up the registers for sys_write
 
 call asm_strlen 		; Length of the message

@@ -1,9 +1,9 @@
 BITS 64                 ; Set the mode to 64-bit
 
 section .text           ; Start the text section
-	global asm_strcmp   ; Declare the function asm_strcmp as global
+	global asm_strcasecmp   ; Declare the function asm_strcmp as global
 
-asm_strcmp:            ; Start of the asm_strcmp function
+asm_strcasecmp:            ; Start of the asm_strcmp function
 	mov rax, 0          ; Initialize RAX register to 0
 	mov rcx, 0          ; Initialize RCX register to 0
 
@@ -14,6 +14,9 @@ asm_strcmp:            ; Start of the asm_strcmp function
 
 	cmp al, 0           ; Check if end of the first string is reached
 	je .end_0           ; If so, exit loop and return result
+
+	or al, 0x20			; Convert to lowercase
+	or bl, 0x20			; Convert to lowercase
 
 	cmp al, bl          ; Compare characters from both strings
 	je .loop            ; If equal, continue loop
@@ -27,9 +30,10 @@ asm_strcmp:            ; Start of the asm_strcmp function
 	ret                 ; Return from the function
 
 .end_1:                 ; Label for ending loop if first string is greater than second
-	mov rax, 1          ; First string is greater than second string, return 1
+	sub al, bl
 	ret                 ; Return from the function
 
 .end_2:                 ; Label for ending loop if first string is less than second
-	mov rax, -1         ; First string is less than second string, return -1
+	sub al, bl
+	movsx rax, al
 	ret                 ; Return from the function
