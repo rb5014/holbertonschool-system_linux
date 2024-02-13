@@ -1,7 +1,7 @@
 BITS 64                 ; Set the mode to 64-bit
 
 section .text           ; Start the text section
-	global asm_strspn   ; Declare the function asm_strcmp as global
+	global asm_strspn   ; Declare the function asm_strspn as global
 
 asm_strspn:            ; Start of the asm_strcmp function
 	xor rax, rax         ; Initialize RAX register to 0
@@ -33,7 +33,7 @@ asm_strspn:            ; Start of the asm_strcmp function
     	jmp .strchr_loop            ; Repeat loop
 
     .strchr_found:                  ; Label for character found
-		inc rbx             ; Increment RCX to move to the next character
+		inc rbx
 		inc rdi
     	jmp .loop                   ; Return from the function
 

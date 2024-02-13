@@ -1,6 +1,6 @@
 
 section .text            ; Start the text section
-	global asm_putc    ; Declare the function asm_memcpy as global
+	global asm_putc    ; Declare the function asm_putc as global
 
 asm_putc:              ; Start of the asm_memcpy function
 	; Inputs:

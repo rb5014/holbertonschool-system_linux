@@ -1,6 +1,6 @@
 
 section .text            ; Start the text section
-	global asm_puts    ; Declare the function asm_memcpy as global
+	global asm_puts    ; Declare the function asm_puts as global
 	extern asm_strlen  ; Declare extern function
 
 asm_puts:              ; Start of the asm_memcpy function

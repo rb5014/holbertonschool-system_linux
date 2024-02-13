@@ -1,7 +1,7 @@
 BITS 64                 ; Set the mode to 64-bit
 
 section .text           ; Start the text section
-	global asm_strcasecmp   ; Declare the function asm_strcmp as global
+	global asm_strcasecmp   ; Declare the function asm_strcasecmp as global
 
 asm_strcasecmp:            ; Start of the asm_strcmp function
 	xor rax, rax         ; Initialize RAX register to 0
