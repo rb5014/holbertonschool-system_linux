@@ -4,8 +4,10 @@ section .text           ; Start the text section
 	global asm_strcasecmp   ; Declare the function asm_strcmp as global
 
 asm_strcasecmp:            ; Start of the asm_strcmp function
-	mov rax, 0          ; Initialize RAX register to 0
-	mov rcx, 0          ; Initialize RCX register to 0
+	xor rax, rax         ; Initialize RAX register to 0
+	xor rbx, rbx         ; Initialize RBX register to 0
+	xor rcx, rcx          ; Initialize RCX register to 0
+
 
 .loop:                  ; Start of the loop
 	mov al, byte [rdi + rcx]  ; Load byte from the first string into AL
@@ -15,25 +17,37 @@ asm_strcasecmp:            ; Start of the asm_strcmp function
 	cmp al, 0           ; Check if end of the first string is reached
 	je .end_0           ; If so, exit loop and return result
 
-	or al, 0x20			; Convert to lowercase
-	or bl, 0x20			; Convert to lowercase
+	jmp .check_first_char
 
-	cmp al, bl          ; Compare characters from both strings
-	je .loop            ; If equal, continue loop
-	ja .end_1           ; If character in first string is greater than in second, exit with 1
-	jb .end_2           ; If character in first string is less than in second, exit with -1
 
-.end_0:                 ; Label for ending loop if first string is ended
-	cmp bl, 0           ; Check if end of the second string is reached
-	jne .end_2          ; If not, exit with -1
-	mov rax, 0          ; Both strings are equal, return 0
-	ret                 ; Return from the function
+.check_first_char:
+	;This permits to convert only if it is an uppercase letter
+	cmp al, 'A'
+	jb .check_second_char
+	cmp al, 'Z'
+	ja .check_second_char
+	or al, 0x20
+	jmp .check_second_char
 
-.end_1:                 ; Label for ending loop if first string is greater than second
-	sub al, bl
-	ret                 ; Return from the function
+.check_second_char:
+	;This permits to convert only if it is an uppercase letter
+	cmp bl, 'A'
+	jb .compare_chars
+	cmp bl, 'Z'
+	ja .compare_chars
+	or bl, 0x20
+	jmp .compare_chars
 
-.end_2:                 ; Label for ending loop if first string is less than second
+.compare_chars:
+	cmp al, bl
+	je .loop
+	jmp .end
+
+.end_0:
+	mov rax, 0
+	ret
+
+.end:
 	sub al, bl
 	movsx rax, al
 	ret                 ; Return from the function

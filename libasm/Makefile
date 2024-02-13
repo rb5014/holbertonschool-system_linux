@@ -1,5 +1,5 @@
-SRC_ASM = ./9-strncasecmp.asm
-SRC_MAIN = tests/9-main.c
+SRC_ASM = ./8-strcasecmp.asm
+SRC_MAIN = tests/8-main.c
 
 all: main_obj asm_obj
 	gcc *.o
