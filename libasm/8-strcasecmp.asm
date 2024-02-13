@@ -14,13 +14,22 @@ asm_strcasecmp:            ; Start of the asm_strcmp function
 	mov bl, byte [rsi + rcx]  ; Load byte from the second string into BL
 	inc rcx             ; Increment RCX to move to the next character
 
-	or al, 0x20
-	or bl, 0x20
+	cmp al, 0
+	je .check_end_2
 
-	cmp al, bl
-	je .loop
+	jmp .compare
 
+.check_end_2:
+	cmp bl, 0
+	je .end
+	jmp .compare
+.compare:
+		or al, 0x20
+    	or bl, 0x20
+
+    	cmp al, bl
+    	je .loop
+.end:
 	sub bl, al
 	mov al, bl
 	ret                 ; Return from the function
-
