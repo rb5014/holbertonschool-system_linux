@@ -1,7 +1,6 @@
 #include "signals.h"
 #include <stdio.h>
-#include<signal.h>
-#include<unistd.h>
+#include <signal.h>
 
 /**
  * sig_handler - signal handler
@@ -10,6 +9,7 @@
 void sig_handler(int signo)
 {
 	printf("Gotcha! [%i]\n", signo);
+	fflush(stdout);
 }
 
 /**
