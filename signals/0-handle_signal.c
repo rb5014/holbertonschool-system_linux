@@ -2,6 +2,16 @@
 #include <stdio.h>
 #include<signal.h>
 #include<unistd.h>
+
+/**
+ * sig_handler - signal handler
+ * @signo: signal number that was caught tg
+*/
+void sig_handler(int signo)
+{
+	printf("Gotcha! [%i]\n", signo);
+}
+
 /**
  * handle_signal - Set the handler for the signal SIGINT
  * The program should print Gotcha! [<signum>] followed by a new line,
@@ -10,12 +20,6 @@
  * sigaction(2) is not allowed
  * Return: 0 on success, -1 on error
  */
-
-void sig_handler(int signo)
-{
-	printf("Gotcha! [%i]\n", signo);
-}
-
 int handle_signal(void)
 {
 	if (signal(SIGINT, sig_handler) == SIG_ERR)
