@@ -13,16 +13,20 @@ void sig_handler(int signo)
 }
 
 /**
- * handle_signal - Set the handler for the signal SIGINT
+ * handle_sigaction - Set the handler for the signal SIGINT
  * The program should print Gotcha! [<signum>] followed by a new line,
  * every time Control-C is pressed
  * (where <signum> must be replaced with the signal number that was caught)
- * sigaction(2) is not allowed
+ * signal(2) is not allowed
  * Return: 0 on success, -1 on error
  */
-int handle_signal(void)
+int handle_sigaction(void)
 {
-	if (signal(SIGINT, sig_handler) == SIG_ERR)
+	struct sigaction act;
+
+	act.sa_handler = sig_handler;
+
+	if (sigaction(SIGINT, &act, NULL))
 		return (-1);
 	return (0);
 }

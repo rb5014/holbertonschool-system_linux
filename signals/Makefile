@@ -1,8 +1,7 @@
-SRC = 0-main.c 0-handle_signal.c
-EXE = 0-handle_signal
+SRC = 2-main.c 2-handle_sigaction.c
 
 all:
-	gcc -Wall -Wextra -Werror -pedantic 0-main.c 0-handle_signal.c -o $(EXE)
+	gcc -Wall -Wextra -Werror -pedantic $(SRC)
 
 clean:
-	rm -f $(EXE)
+	rm -f a.out
