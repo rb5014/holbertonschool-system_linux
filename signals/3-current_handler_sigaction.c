@@ -12,12 +12,10 @@
  */
 void (*current_handler_sigaction(void))(int)
 {
-	void (*handler)(int);
 	struct sigaction oldact;
 
-	sigaction(SIGINT, NULL, &oldact);
+	if (sigaction(SIGINT, NULL, &oldact) == -1)
+		return (NULL);
 
-	handler = oldact.sa_handler;
-
-	return (handler);
+	return (oldact.sa_handler);
 }
