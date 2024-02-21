@@ -19,5 +19,5 @@ void (*current_handler_sigaction(void))(int)
 
 	handler = oldact.sa_handler;
 
-	return (handler != SIG_ERR ? handler : NULL);
+	return (handler);
 }

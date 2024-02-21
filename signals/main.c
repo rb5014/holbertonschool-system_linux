@@ -1,12 +1,32 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <unistd.h>
+#include <signal.h>
 
 #include "signals.h"
 
-/* Our functions */
-void print_hello(int);
-void set_print_hello(void);
+
+/**
+ * print_hello - Prints hello when a signal is caught
+ * @signum: Signal no
+ */
+void print_hello(int signum)
+{
+	(void)signum;
+	printf("Hello :)\n");
+	fflush(stdout);
+}
+
+/**
+ * set_print_hello - Set 'print_hello' as the handler for SIGINT
+ */
+void set_print_hello(void)
+{
+	struct sigaction act;
+
+	act.sa_handler = &print_hello;
+	sigaction(SIGINT, &act, NULL);
+}
 
 /**
  * main - Entry point
@@ -15,23 +35,25 @@ void set_print_hello(void);
  */
 int main(void)
 {
-    void (*handler)(int);
-    int i;
+	void (*handler)(int);
 
-    handler = current_handler_sigaction();
-    printf("Address of the current handler: %#lx\n", (unsigned long int)handler);
+	/* Set 'print_hello()` as the handler for SIGINT */
+	set_print_hello();
 
-    /* Set 'print_hello()` as the handler for SIGINT */
-    set_print_hello();
+	handler = current_handler_sigaction();
+	if (handler != &print_hello)
+	{
+		printf("Addresses differ\n");
+		return (EXIT_FAILURE);
+	}
 
-    handler = current_handler_sigaction();
-    printf("Address of the 'print_hello' function: %#lx\n", (unsigned long int)&print_hello);
-    printf("Address of the current handler: %#lx\n", (unsigned long int)handler);
-
-    for (i = 0; ; i++)
-    {
-        printf("[%d] Wait for it ...\n", i);
-        sleep(1);
-    }
-    return (EXIT_SUCCESS);
+	/* Test a second time to ensure the handler is put back */
+	handler = current_handler_sigaction();
+	if (handler != &print_hello)
+	{
+		printf("Addresses differ\n");
+		return (EXIT_FAILURE);
+	}
+	printf("Correct\n");
+	return (EXIT_SUCCESS);
 }
