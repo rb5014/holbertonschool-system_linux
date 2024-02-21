@@ -18,13 +18,13 @@ int main(void)
     void (*handler)(int);
     int i;
 
-    handler = current_handler_signal();
+    handler = current_handler_sigaction();
     printf("Address of the current handler: %#lx\n", (unsigned long int)handler);
 
     /* Set 'print_hello()` as the handler for SIGINT */
     set_print_hello();
 
-    handler = current_handler_signal();
+    handler = current_handler_sigaction();
     printf("Address of the 'print_hello' function: %#lx\n", (unsigned long int)&print_hello);
     printf("Address of the current handler: %#lx\n", (unsigned long int)handler);
 
