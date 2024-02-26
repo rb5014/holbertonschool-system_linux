@@ -6,6 +6,5 @@
 */
 int pid_exist(pid_t pid)
 {
-	/* kill ruturns 0 if pid exists, -1 if not, so we return the NOT of kill */
 	return (!(kill(pid, 0)));
 }
