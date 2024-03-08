@@ -2,6 +2,10 @@
 
 static char *file_path;
 
+/**
+ * process_elf32 - Processes an elf32 file
+ * @file: @file: Pointer to the ELF file.
+*/
 void process_elf32(FILE *file)
 {
 	char *strtab;
@@ -29,6 +33,10 @@ void process_elf32(FILE *file)
 	free(s_hdrs);
 }
 
+/**
+ * process_elf64 - Processes an elf32 file
+ * @file: @file: Pointer to the ELF file.
+*/
 void process_elf64(FILE *file)
 {
 	char *strtab;
@@ -104,19 +112,21 @@ void choose_print_function(FILE *file, int elf_class)
  */
 int main(int argc, char *argv[])
 {
-	FILE *file;
+	FILE *file = NULL;
 	unsigned char ident[16];
 	int elf_class;
 
 	if (argc < 2)
-	{
-		printf("Usage: ./hnm prog_path\n");
-		argv[1] = "./test/executables/vgpreload_memcheck-x86-linux.so";
-	}
+		argv[1] = "a.out";
 
 	file_path = argv[1];
 
 	file = fopen(argv[1], "rb");
+	if (!file)
+	{
+		fprintf(stderr, "hnm: '%s': No such file\n", argv[1]);
+		return (-1);
+	}
 	/* Read ident to check elf class: 32 or 64, and endianness : little or big */
 	fseek(file, 0, SEEK_SET);
 	fread(&ident, 1, sizeof(ident), file);

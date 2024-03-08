@@ -1,14 +1,13 @@
 #include "hnm.h"
 
 /**
- * get_elf32_s_names - Get section names for 32-bit ELF files.
+ * get_elf32_sym_structs - Get symbol structs for 32-bit ELF files.
  * @file: Pointer to the ELF file.
- * @f_hdr32: ELF header structure for 32-bit ELF files.
- * @s_hdrs32: Array of 32-bit section headers.
+ * @f_hdr: ELF header structure for 32-bit ELF files.
+ * @symtab_hdr: ".symtab" section header.
+ * @n_symbols: Number of symbols of the file
  *
- * This function retrieves section names for 32-bit ELF files.
- *
- * Return: Pointer to an array of section names.
+ * Return: Pointer to an "array" of Elf32_Sym structs.
  */
 Elf32_Sym *get_elf32_sym_structs(FILE *file, Elf32_Ehdr f_hdr,
 								 Elf32_Shdr symtab_hdr, unsigned long n_symbols)
@@ -35,14 +34,13 @@ Elf32_Sym *get_elf32_sym_structs(FILE *file, Elf32_Ehdr f_hdr,
 
 
 /**
- * get_elf64_s_names - Get section names for 64-bit ELF files.
+ * get_elf64_sym_structs - Get symbol structs for 64-bit ELF files.
  * @file: Pointer to the ELF file.
- * @f_hdr64: ELF header structure for 64-bit ELF files.
- * @s_hdrs64: Array of 64-bit section headers.
+ * @f_hdr: ELF header structure for 64-bit ELF files.
+ * @symtab_hdr: ".symtab" section header.
+ * @n_symbols: Number of symbols of the file
  *
- * This function retrieves section names for 64-bit ELF files.
- *
- * Return: Pointer to an array of section names.
+ * Return: Pointer to an "array" of Elf64_Sym structs.
  */
 Elf64_Sym *get_elf64_sym_structs(FILE *file, Elf64_Ehdr f_hdr,
 								 Elf64_Shdr symtab_hdr, unsigned long n_symbols)

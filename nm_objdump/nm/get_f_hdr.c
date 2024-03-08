@@ -26,7 +26,6 @@ Elf64_Ehdr get_elf64_f_hdr(FILE *file)
 
 /**
  * convert_elf32_f_hdr_endianness - Convert endianness of fields.
- * @file: Pointer to the ELF file.
  * @f_hdr32: Pointer to the ELF header structure for 32-bit ELF files.
  *
  * This function reads and updates the ELF header information
@@ -42,7 +41,6 @@ void convert_elf32_f_hdr_endianness(Elf32_Ehdr *f_hdr32)
 
 /**
  * convert_elf64_f_hdr_endianness - Convert endianness of fields.
- * @file: Pointer to ELF file.
  * @f_hdr64: Pointer to ELF64_Ehdr structure to store header information.
  *
  * Reads ELF64_Ehdr information from the file and updates f_hdr64.
