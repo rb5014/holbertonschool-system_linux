@@ -20,7 +20,7 @@ void process_elf32(FILE *file)
 	get_elf32_sym_hdrs(file, f_hdr, s_hdrs, sym_hdrs);
 
 	if (sym_hdrs[0].sh_entsize == 0)
-		fprintf(stderr, "hnm: %s: no symbols\n", file_path);
+		fprintf(stderr, "./hnm: %s: no symbols\n", file_path);
 	else
 	{
 		n_symbols = sym_hdrs[0].sh_size / sym_hdrs[0].sh_entsize;
@@ -51,7 +51,7 @@ void process_elf64(FILE *file)
 	get_elf64_sym_hdrs(file, f_hdr, s_hdrs, sym_hdrs);
 
 	if (sym_hdrs[0].sh_entsize == 0)
-		fprintf(stderr, "hnm: %s: no symbols\n", file_path);
+		fprintf(stderr, "./hnm: %s: no symbols\n", file_path);
 	else
 	{
 		n_symbols = sym_hdrs[0].sh_size / sym_hdrs[0].sh_entsize;
@@ -124,7 +124,7 @@ int main(int argc, char *argv[])
 	file = fopen(argv[1], "rb");
 	if (!file)
 	{
-		fprintf(stderr, "hnm: '%s': No such file\n", argv[1]);
+		fprintf(stderr, "./hnm: '%s': No such file\n", argv[1]);
 		return (-1);
 	}
 	/* Read ident to check elf class: 32 or 64, and endianness : little or big */
