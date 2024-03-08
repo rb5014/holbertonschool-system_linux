@@ -13,6 +13,7 @@ void process_elf32(FILE *file)
 
 	f_hdr = get_elf32_f_hdr(file);
 	s_hdrs = get_elf32_all_sct_hdrs(file, f_hdr);
+	sym_hdrs[0].sh_entsize = 0;
 	get_elf32_sym_hdrs(file, f_hdr, s_hdrs, sym_hdrs);
 
 	if (sym_hdrs[0].sh_entsize == 0)
@@ -40,6 +41,7 @@ void process_elf64(FILE *file)
 
 	f_hdr = get_elf64_f_hdr(file);
 	s_hdrs = get_elf64_all_sct_hdrs(file, f_hdr);
+	sym_hdrs[0].sh_entsize = 0;
 	get_elf64_sym_hdrs(file, f_hdr, s_hdrs, sym_hdrs);
 
 	if (sym_hdrs[0].sh_entsize == 0)
