@@ -13,8 +13,7 @@
 Elf32_Sym *get_elf32_sym_structs(FILE *file, Elf32_Ehdr f_hdr,
 								 Elf32_Shdr symtab_hdr, unsigned long n_symbols)
 {
-	int i;
-
+	unsigned long i;
 	Elf32_Sym *symbols = malloc(sizeof(Elf32_Sym) * n_symbols);
 
 	fseek(file, symtab_hdr.sh_offset, SEEK_SET);
@@ -48,7 +47,7 @@ Elf32_Sym *get_elf32_sym_structs(FILE *file, Elf32_Ehdr f_hdr,
 Elf64_Sym *get_elf64_sym_structs(FILE *file, Elf64_Ehdr f_hdr,
 								 Elf64_Shdr symtab_hdr, unsigned long n_symbols)
 {
-	int i;
+	unsigned long i;
 
 	Elf64_Sym *symbols = malloc(sizeof(Elf64_Sym) * n_symbols);
 

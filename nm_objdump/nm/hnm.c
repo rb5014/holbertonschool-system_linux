@@ -4,7 +4,6 @@ static char *file_path;
 
 void process_elf32(FILE *file)
 {
-	int i;
 	char *strtab;
 	unsigned long n_symbols;
 	Elf32_Ehdr f_hdr;
@@ -32,7 +31,6 @@ void process_elf32(FILE *file)
 
 void process_elf64(FILE *file)
 {
-	int i;
 	char *strtab;
 	unsigned long n_symbols;
 	Elf64_Ehdr f_hdr;

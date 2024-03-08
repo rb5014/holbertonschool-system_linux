@@ -34,11 +34,11 @@ Elf64_Sym *get_elf64_sym_structs(FILE *file, Elf64_Ehdr f_hdr,
 char *get_elf32_strtab(FILE *file, Elf32_Shdr strtab_hdr);
 char *get_elf64_strtab(FILE *file, Elf64_Shdr strtab_hdr);
 
-const char get_elf32_sym_type(uint8_t info, Elf32_Sym sym, Elf32_Shdr *shdr);
-const char get_elf64_sym_type(uint8_t info, Elf64_Sym sym, Elf64_Shdr *shdr);
+char get_elf32_sym_type(uint8_t info, Elf32_Sym sym, Elf32_Shdr *shdr);
+char get_elf64_sym_type(uint8_t info, Elf64_Sym sym, Elf64_Shdr *shdr);
 
-void convert_elf32_f_hdr_endianness(FILE *file, Elf32_Ehdr *f_hdr32);
-void convert_elf64_f_hdr_endianness(FILE *file, Elf64_Ehdr *f_hdr64);
+void convert_elf32_f_hdr_endianness(Elf32_Ehdr *f_hdr32);
+void convert_elf64_f_hdr_endianness(Elf64_Ehdr *f_hdr64);
 
 void convert_elf32_s_hdr_endianness(Elf32_Shdr *s_hdr32);
 void convert_elf64_s_hdr_endianness(Elf64_Shdr *s_hdr64);

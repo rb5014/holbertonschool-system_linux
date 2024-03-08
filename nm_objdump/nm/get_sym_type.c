@@ -13,7 +13,7 @@
 * @shdr: An array of ELF section headers.
 * Return: A string representing the symbol's type.
 */
-const char get_elf32_sym_type(uint8_t info, Elf32_Sym sym, Elf32_Shdr *shdr)
+char get_elf32_sym_type(uint8_t info, Elf32_Sym sym, Elf32_Shdr *shdr)
 {
 	char type;
 
@@ -63,7 +63,7 @@ const char get_elf32_sym_type(uint8_t info, Elf32_Sym sym, Elf32_Shdr *shdr)
 * @shdr: An array of ELF section headers.
 * Return: A string representing the symbol's type.
 */
-const char get_elf64_sym_type(uint8_t info, Elf64_Sym sym, Elf64_Shdr *shdr)
+char get_elf64_sym_type(uint8_t info, Elf64_Sym sym, Elf64_Shdr *shdr)
 {
 	char type;
 
