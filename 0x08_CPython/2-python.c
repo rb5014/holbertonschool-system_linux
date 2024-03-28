@@ -25,7 +25,7 @@ void print_python_bytes(PyObject *p)
 	printf("[.] bytes object info\n");
 	printf("  size: %zi\n", size);
 	printf("  trying string: %s\n", str);
-	printf("  first %zi bytes:", size > 10 ? 10 : size + 1);
+	printf("  first %zi bytes:", size >= 10 ? 10 : size + 1);
 	for (i = 0; (i < size + 1) && (i < 10); i++)
 		printf(" %02hhx", str[i]);
 	printf("\n");
