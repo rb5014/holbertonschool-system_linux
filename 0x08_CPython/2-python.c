@@ -16,7 +16,7 @@ void print_python_bytes(PyObject *p)
 
 	if (PyBytes_CheckExact(p) == 0)
 	{
-		printf("  [ERROR] Invalid Bytes Object\n");
+		fprintf(stderr, "  [ERROR] Invalid Bytes Object\n");
 		return;
 	}
 
@@ -26,7 +26,7 @@ void print_python_bytes(PyObject *p)
 	printf("  size: %zi\n", size);
 	printf("  trying string: %s\n", str);
 	printf("  first %zi bytes:", size >= 10 ? 10 : size + 1);
-	for (i = 0; (i < size + 1) && (i < 10); i++)
+	for (i = 0; (i <= size) && (i < 10); i++)
 		printf(" %02hhx", str[i]);
 	printf("\n");
 }
@@ -48,7 +48,7 @@ void print_python_list(PyObject *p)
 
 	if (PyList_CheckExact(p) == 0)
 	{
-		printf("  [ERROR] Invalid List Object\n");
+		fprintf(stderr, "  [ERROR] Invalid List Object\n");
 		return;
 	}
 	printf("[*] Python list info\n");
