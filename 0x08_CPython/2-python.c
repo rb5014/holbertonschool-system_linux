@@ -50,7 +50,7 @@ void print_python_list(PyObject *p)
 
 	if (PyList_CheckExact(p) == 0)
 	{
-		printf("  [ERROR] Invalid List Object\n");
+		fprintf(stderr, "[ERROR] Invalid List Object\n");
 		return;
 	}
 	printf("[*] Python list info\n");
