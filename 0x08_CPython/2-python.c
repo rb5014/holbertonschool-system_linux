@@ -39,7 +39,6 @@ void print_python_bytes(PyObject *p)
 * This function prints information about a Python List object, including its
 * size, allocation, and the types of its elements.
 * If the element is a PyBytes object, call print_python_bytes function
-
 * @p: A pointer to the Python List object.
 */
 void print_python_list(PyObject *p)
