@@ -14,15 +14,15 @@ void print_python_bytes(PyObject *p)
 	char *str = NULL;
 
 
-
-	PyBytes_AsStringAndSize(p, &str, &size);
-
 	printf("[.] bytes object info\n");
 	if (PyBytes_CheckExact(p) == 0)
 	{
 		printf("  [ERROR] Invalid Bytes Object\n");
 		return;
 	}
+
+	PyBytes_AsStringAndSize(p, &str, &size);
+
 	printf("  size: %zi\n", size);
 	printf("  trying string: %s\n", str);
 	printf("  first %zi bytes:", size >= 10 ? 10 : size + 1);
