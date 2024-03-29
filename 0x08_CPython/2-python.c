@@ -16,7 +16,7 @@ void print_python_bytes(PyObject *p)
 
 	if (PyBytes_CheckExact(p) == 0)
 	{
-		fprintf(stderr, "  [ERROR] Invalid Bytes Object\n");
+		printf("  [ERROR] Invalid Bytes Object\n");
 		return;
 	}
 
@@ -48,7 +48,7 @@ void print_python_list(PyObject *p)
 
 	if (PyList_CheckExact(p) == 0)
 	{
-		fprintf(stderr, "  [ERROR] Invalid List Object\n");
+		printf("  [ERROR] Invalid List Object\n");
 		return;
 	}
 	printf("[*] Python list info\n");
@@ -57,7 +57,7 @@ void print_python_list(PyObject *p)
 
 	for (i = 0; i < size; i++)
 	{
-		item = PyList_GetItem(p, i);
+		item = PyList_GET_ITEM(p, i);
 		printf("Element %zi: %s\n", i, item->ob_type->tp_name);
 		if (PyBytes_CheckExact(item))
 			print_python_bytes(item);
