@@ -9,7 +9,7 @@
 */
 void print_python_float(PyObject *p)
 {
-
+	double value;
 
 	printf("[.] float object info\n");
 	if (PyFloat_CheckExact(p) == 0)
@@ -17,8 +17,11 @@ void print_python_float(PyObject *p)
 		printf("  [ERROR] Invalid Float Object\n");
 		return;
 	}
-
-	printf("  value: %.16g\n", PyFloat_AsDouble(p));
+	value = PyFloat_AsDouble(p);
+	if ((int)value == value)
+		printf("  value: %i.0\n", (int)value);
+	else
+		printf("  value: %.16g\n", value);
 }
 
 /**
