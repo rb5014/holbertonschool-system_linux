@@ -18,8 +18,8 @@ void print_python_float(PyObject *p)
 		return;
 	}
 	value = PyFloat_AsDouble(p);
-	if ((int)value == value)
-		printf("  value: %i.0\n", (int)value);
+	if ((long)value == value)
+		printf("  value: %li.0\n", (long)value);
 	else
 		printf("  value: %.16g\n", value);
 }
