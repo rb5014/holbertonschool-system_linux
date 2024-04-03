@@ -18,7 +18,7 @@ void print_python_float(PyObject *p)
 		return;
 	}
 
-	printf("  value: %f\n", PyFloat_AsDouble(p));
+	printf("  value: %g\n", PyFloat_AsDouble(p));
 }
 
 /**
@@ -42,7 +42,8 @@ void print_python_bytes(PyObject *p)
 		return;
 	}
 
-	PyBytes_AsStringAndSize(p, &str, &size);
+	size = PyBytes_Size(p);
+	str = ((PyBytesObject *)p)->ob_sval;
 
 	printf("  size: %zi\n", size);
 	printf("  trying string: %s\n", str);
