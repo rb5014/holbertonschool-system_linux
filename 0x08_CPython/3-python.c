@@ -10,6 +10,7 @@
 void print_python_float(PyObject *p)
 {
 	double value;
+	char str[50];
 
 	printf("[.] float object info\n");
 	if (PyFloat_CheckExact(p) == 0)
@@ -18,10 +19,11 @@ void print_python_float(PyObject *p)
 		return;
 	}
 	value = PyFloat_AsDouble(p);
-	if ((long)value == value)
-		printf("  value: %li.0\n", (long)value);
+	sprintf(str, "%.16g", value);
+	if (strchr(str, '.') != NULL)
+		printf("  value: %s\n", str);
 	else
-		printf("  value: %.16g\n", value);
+		printf("  value: %.1f\n", value);
 }
 
 /**
