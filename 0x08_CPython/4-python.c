@@ -17,6 +17,6 @@ void print_python_string(PyObject *p)
 	}
 	printf("  type: %s\n",
 		PyUnicode_IS_COMPACT_ASCII(p) ? "compact ascii" : "compact unicode object");
-	printf("  lenght: %zi\n", PyUnicode_GetSize(p));
+	printf("  length: %zi\n", PyUnicode_GetSize(p));
 	printf("  value: %s\n", PyUnicode_AsUTF8(p));
 }
