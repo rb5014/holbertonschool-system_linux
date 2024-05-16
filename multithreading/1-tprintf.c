@@ -15,5 +15,5 @@ int tprintf(char const *format, ...)
 	va_start(args, format);
 	result = vprintf(format, args);
 	va_end(args);
-	pthread_exit(&result);
+	return (result);
 }
