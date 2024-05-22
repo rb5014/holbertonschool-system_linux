@@ -52,6 +52,9 @@ void blur_portion(blur_portion_t const *portion)
 	if (!portion || !portion->img || !portion->img_blur || !portion->kernel)
 		return;
 
+	if ((portion->x + portion->w) >= portion->img->w ||
+		(portion->y + portion->h) >= portion->img->h)
+		return;
 	/* Iterate over portion pixels */
 	for (x = portion->x; x < portion->x + portion->w; x++)
 	{
