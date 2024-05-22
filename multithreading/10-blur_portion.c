@@ -57,10 +57,8 @@ void blur_portion(blur_portion_t const *portion)
 	}
 
 	/* Check if the slice dimensions are valid */
-	if (portion->x >= portion->img->w || portion->y >= portion->img->h ||
-		portion->w > portion->img->w || portion->h > portion->img->h ||
-		portion->x + portion->w > portion->img->w || portion->y + portion->h >
-		portion->img->h)
+	if (((portion->x + portion->w) > portion->img->w) ||
+		((portion->y + portion->h) > portion->img->h))
 	{
 		fprintf(stderr, "Error: Invalid portion dimensions.\n");
 		return;
