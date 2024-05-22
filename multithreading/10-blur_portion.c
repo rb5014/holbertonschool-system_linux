@@ -18,15 +18,15 @@ void blur_pixel(blur_portion_t const *portion, size_t x, size_t y)
 	pixel_t *pixels = portion->img->pixels; /* Array of pixels of source image */
 
 	/* Iterate over surroundings pixels in the range of the kernel size */
-	for (i = x - half_k, k_x = 0; i <= (ssize_t) (x + half_k); i++, k_x++)
+	for (j = y - half_k, k_y = 0; j <= (ssize_t) (y + half_k); j++, k_y++)
 	{
-		/* Bound checking horizontally */
-		if ((i < 0) || (i >= (ssize_t) portion->img->w))
+		/* Bound checking vertically */
+		if ((j < 0) || (j >= (ssize_t) portion->img->h))
 			continue;
-		for (j = y - half_k, k_y = 0; j <= (ssize_t) (y + half_k); j++, k_y++)
+		for (i = x - half_k, k_x = 0; i <= (ssize_t) (x + half_k); i++, k_x++)
 		{
-			/* Bound checking vertically */
-			if ((j < 0) || (j >= (ssize_t) portion->img->h))
+			/* Bound checking horizontally */
+			if ((i < 0) || (i >= (ssize_t) portion->img->w))
 				continue;
 			divider += portion->kernel->matrix[k_x][k_y];
 			current_p_index = j * portion->img->w + i;
@@ -67,9 +67,9 @@ void blur_portion(blur_portion_t const *portion)
 	}
 
 	/* Iterate over portion pixels */
-	for (x = portion->x; x < portion->x + portion->w; x++)
+	for (y = portion->y; y < portion->y + portion->h; y++)
 	{
-		for (y = portion->y; y < portion->y + portion->h; y++)
+		for (x = portion->x; x < portion->x + portion->w; x++)
 			blur_pixel(portion, x, y);
 	}
 }
