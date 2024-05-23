@@ -2,7 +2,8 @@
 #define LIST_H
 
 #include <stddef.h>
-
+#include <stdlib.h>
+#include <stdio.h>
 /**
  * struct node_s - Node structure
  *
@@ -39,6 +40,5 @@ node_t	*list_add(list_t *list, void *content);
 list_t	*list_init(list_t *list);
 void	list_destroy(list_t *list, node_func_t free_func);
 void	list_each(list_t *list, node_func_t func);
-list_t *prime_factors(char const *s);
 
 #endif /* LIST_H */

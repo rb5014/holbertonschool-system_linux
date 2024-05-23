@@ -1,6 +1,4 @@
-#include <stdlib.h>
 #include "multithreading.h"
-#include "list.h"
 
 /**
  * add_prime - Allocates memory for prime factor and add it to list
