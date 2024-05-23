@@ -7,5 +7,8 @@
 10-blur_portion.c: clean
 	gcc -g -Wall -Wextra -Werror -pedantic -g3 10-main.c 10-blur_portion.c -o 10-blur_portion
 
+11-blur_image: clean
+	gcc -Wall -Wextra -Werror -pedantic -g3 11-main.c 11-blur_image.c 10-blur_portion.c -o 11-blur_image -pthread
+
 clean:
 	rm -f 0-thread_entry 1-tprintf
