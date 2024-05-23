@@ -2,8 +2,7 @@
 #define LIST_H
 
 #include <stddef.h>
-#include <stdlib.h>
-#include <stdio.h>
+
 /**
  * struct node_s - Node structure
  *

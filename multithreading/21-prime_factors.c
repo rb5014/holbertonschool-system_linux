@@ -1,5 +1,7 @@
-#include "multithreading.h"
-
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include "list.h"
 /**
 * is_prime - Checks if a number is prime
 * @n: number to check
