@@ -13,5 +13,7 @@
 20-tprintf: clean
 	gcc -Wall -Wextra -Werror -pedantic -g3 20-main.c 20-tprintf.c -o 20-tprintf -pthread
 
+21-prime_factors: clean
+	gcc -Wall -Wextra -Werror -pedantic -g3 21-main.c 21-prime_factors.c list.c -o 21-prime_factors
 clean:
 	rm -f 0-thread_entry 1-tprintf
