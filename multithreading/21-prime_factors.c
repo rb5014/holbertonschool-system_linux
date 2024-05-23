@@ -6,7 +6,7 @@
  * @n: prime factor to add to list
 
 */
-void add_prime(list_t *list, unsigned long n)
+static void add_prime(list_t *list, unsigned long n)
 {
 	unsigned long *prime = malloc(sizeof(*prime));
 
