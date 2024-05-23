@@ -1,6 +1,27 @@
 #include "multithreading.h"
 
 /**
+* is_prime - Checks if a number is prime
+* @n: number to check
+* Return: 1 if the number is prime, 0 otherwise
+*/
+int is_prime(unsigned long n)
+{
+	unsigned long i;
+
+	if (n < 2)
+		return (0);
+
+	for (i = 2; i * i <= n; i++)
+	{
+		if (n % i == 0)
+			return (0);
+	}
+
+	return (1);
+}
+
+/**
  * add_prime - Allocates memory for prime factor and add it to list
  * @list: list to add the prime factor in
  * @n: prime factor to add to list
@@ -45,7 +66,7 @@ list_t *prime_factors(char const *s)
 	/* one element (Note i = i +2)  */
 	for (i = 3; i * i <= n; i +=2)
 	{ /* While i divides n, print i and divide n */
-		while (n % i == 0)
+		while (n % i == 0 && is_prime(i))
 		{
 			add_prime(list, i);
 			n /= i;
