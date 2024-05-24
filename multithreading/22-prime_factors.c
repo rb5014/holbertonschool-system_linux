@@ -83,16 +83,12 @@ void *exec_tasks(list_t const *tasks)
 		{
 			/* Mark the task as started */
 			task->status = STARTED;
-
 			/* Unlock the task before executing it to allow other threads to proceed */
 			pthread_mutex_unlock(&task->lock);
-
 			/* Log that the task has started */
 			tprintf("[%02zd] Started\n", i);
-
 			/* Execute the task entry function and store the result */
 			task->result = task->entry(task->param);
-
 			/* Lock the task again to update its status */
 			pthread_mutex_lock(&task->lock);
 			if (task->result)
@@ -108,7 +104,6 @@ void *exec_tasks(list_t const *tasks)
 		}
 		/* Unlock the task after checking/updating its status */
 		pthread_mutex_unlock(&task->lock);
-
 	}
 	return (NULL);
 }
