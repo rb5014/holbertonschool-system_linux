@@ -1,10 +1,5 @@
 #include "multithreading.h"
 
-#include "multithreading.h"
-#include <stdlib.h>
-
-#include "multithreading.h"
-#include <stdlib.h>
 
 /**
  * create_task - Creates a task
@@ -38,8 +33,6 @@ task_t *create_task(task_entry_t entry, void *param)
 	return (task); /* Return the created task */
 }
 
-#include "multithreading.h"
-#include <stdlib.h>
 
 /**
  * destroy_task - Destroys a task
@@ -112,5 +105,5 @@ void *exec_tasks(list_t const *tasks)
 		/* Unlock the task after checking/updating its status */
 		pthread_mutex_unlock(&task->lock);
 	}
-	return NULL;
+	return (NULL);
 }
