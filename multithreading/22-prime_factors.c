@@ -69,8 +69,9 @@ void destroy_task(task_t *task)
 void *exec_tasks(list_t const *tasks)
 {
 	node_t *node;
+	size_t i;
 
-	for (node = tasks->head; node; node = node->next)
+	for (i = 0, node = tasks->head; node; i++, node = node->next)
 	{
 		task_t *task = (task_t *)node->content;
 
@@ -87,23 +88,27 @@ void *exec_tasks(list_t const *tasks)
 			pthread_mutex_unlock(&task->lock);
 
 			/* Log that the task has started */
-			tprintf("[%lu] [%02d] Started\n", pthread_self(),
-					(int)(node - tasks->head));
+			tprintf("[%02zd] Started\n", i);
 
 			/* Execute the task entry function and store the result */
 			task->result = task->entry(task->param);
 
-			/* Log that the task has completed successfully */
-			tprintf("[%lu] [%02d] Success\n", pthread_self(),
-					(int)(node - tasks->head));
-
 			/* Lock the task again to update its status */
 			pthread_mutex_lock(&task->lock);
-			task->status = SUCCESS;
+			if (task->result)
+			{
+				tprintf("[%02zd] Success\n", i);
+				task->status = SUCCESS;
+			}
+			else
+			{
+				tprintf("[%02zd] Failed\n", i);
+				task->status = FAILURE;
+			}
 		}
-
 		/* Unlock the task after checking/updating its status */
 		pthread_mutex_unlock(&task->lock);
+
 	}
 	return (NULL);
 }
