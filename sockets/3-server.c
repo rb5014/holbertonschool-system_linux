@@ -37,6 +37,7 @@ int main(void)
 	int clnt_sock;
 	unsigned int clnt_len; /* Length of client address data structure */
 	char chunk[CHUNKSIZE];
+	ssize_t bytes_received;
 
 	serv_addr.sin_family = AF_INET;
 	serv_addr.sin_port = htons(PORT);
@@ -46,7 +47,7 @@ int main(void)
 		exit_with_err_msg("Error socket creation failed\n");
 	if (bind(serv_sock, (struct sockaddr *) &serv_addr, sizeof(serv_addr)) < 0)
 		exit_with_err_msg("Error binding socket\n");
-	if (listen(serv_sock, 0) < 0)
+	if (listen(serv_sock, MAXPENDING) < 0)
 		exit_with_err_msg("Error listening status\n");
 	printf("Server listening on port 12345\n");
 	clnt_len = sizeof(clnt_addr);
@@ -54,15 +55,18 @@ int main(void)
 	if (clnt_sock < 0)
 		exit_with_err_msg("accept() failed");
 	printf("Client connected: %s\n", inet_ntoa(clnt_addr.sin_addr));
-	memset(chunk, '\0', CHUNKSIZE);	/* clear the variable */
 	printf("Message received: \"");
-	while (recv(clnt_sock, chunk, CHUNKSIZE, 0))
+	while (1)
 	{
+		bytes_received = recv(clnt_sock, chunk, CHUNKSIZE - 1, 0);
+		if (bytes_received <= 0)
+			break;
+		chunk[bytes_received] = '\0'; /* Null-terminate the received data */
 		printf("%s", chunk);
-		memset(chunk, '\0', CHUNKSIZE);	/* clear the variable */
 	}
 	printf("\"\n");
 	close(clnt_sock);
+	close(serv_sock);
 
 	return (1);
 }
