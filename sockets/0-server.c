@@ -5,6 +5,9 @@
 /**
  * main - Entry point
  * opens an IPv4/TCP socket, and listens to traffic on port 12345 (Any address)
+ *		program must hang indefinitely
+ *		(It’ll eventually be killed by a signal during correction)
+ *		don’t have to accept entering connections
  * Return: 1 on success, 0 otherwise
 */
 int main(void)
