@@ -112,11 +112,12 @@ int main(void)
 		}
 		printf("\"\n");
 		print_breakdown(first_line);
+		fflush(stdout);
 		close(clnt_sock);
 		free(first_line);
 		first_line = NULL;
 	}
-	
+
 	close(serv_sock);
 
 	return (1);
