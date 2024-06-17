@@ -12,47 +12,41 @@
 #define CHUNKSIZE 3000
 
 /**
- * print_breakdown - print the breakdown of the first line of http request
- * @line: chunk of data containing 1st line
+ * parse_http_request - print path and queries of the url
+ * @request: request string
+ * Using sscanf, parse the http request to get the path and the queries part,
+ * which is also parsed again to print each key/value pair
 */
-void print_breakdown(char *line)
+void parse_http_request(const char *request)
 {
-	char *token = " ";
-	char *uri;
-	const char *delim = " ";
+	char path[256], query[1024];
+	int status;
+	char *key_value, *key, *value;
 
-	token = strsep(&line, delim);
-	printf("Method: %s\n", token);
-	token = strsep(&line, delim);
-	printf("Path: %s\n", token);
-	token = strsep(&line, delim);
-	printf("Version: %s\n", token);
-}
+	query[0] = '\0'; /* In case there is no query */
 
-/**
- * get_first_line_http - get first line of http request
- * @bytes_received: bytes received from call to recv
- * @chunk: chunk of data from to recv
- * Return: The first line
-*/
-char *get_first_line_http(const int bytes_received, const char *chunk)
-{
-	char *first_line = NULL;
-	int i;
+	status = sscanf(request, "%*s %255[^? ]%1023[^\n ]", path, query);
+	if (status < 0)
+		return;
+	printf("Path: %s\n", path);
 
-	first_line = malloc(bytes_received);
-	for (i = 0; i < bytes_received; i++)
+	if (query[0] != '?')
 	{
-		if (chunk[i] != '\r')
-			first_line[i] = chunk[i];
-		else
+		return;
+	}
+	key_value = query + 1; /* Skip the '?' character */
+	while ((key = strsep(&key_value, "&")) != NULL)
+	{
+		value = strchr(key, '=');
+		if (value)
 		{
-			first_line[i] = '\0';
-			break;
+			*value = '\0';
+			value++;
+			printf("Query: \"%s\" -> \"%s\"\n", key, value);
 		}
 	}
-	return (first_line);
 }
+
 
 /**
  * handle_message - handle message from client socket
@@ -64,20 +58,18 @@ char *get_first_line_http(const int bytes_received, const char *chunk)
 void handle_message(const int clnt_sock)
 {
 	char chunk[CHUNKSIZE];
-	int bytes_received;
-	char *first_line;
+	char *request = NULL;
+	int bytes_received, total_bytes_received = 0;
 	const char *ok_status = "HTTP/1.1 200 OK\r\n\r\n";
 
-	printf("Raw request: \"");
 	while (1)
 	{
 		bytes_received = recv(clnt_sock, chunk, CHUNKSIZE - 1, 0);
-		if (!first_line)
-		{
-			first_line = get_first_line_http(bytes_received, chunk);
-		}
 		chunk[bytes_received] = '\0'; /* Null-terminate the received data */
-		printf("%s", chunk);
+		total_bytes_received += bytes_received;
+
+		request = realloc(request, total_bytes_received + 1);
+		strcat(request, chunk);
 		if (bytes_received < 0)
 		{
 			close(clnt_sock);
@@ -90,10 +82,10 @@ void handle_message(const int clnt_sock)
 			break;
 		}
 	}
-	printf("\"\n");
-	print_breakdown(first_line);
-	free(first_line);
-	first_line = NULL;
+	printf("Raw request: \"%s\"\n", request);
+	parse_http_request(request);
+	free(request);
+	request = NULL;
 }
 
 /**
