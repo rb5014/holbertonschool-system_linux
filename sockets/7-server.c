@@ -18,19 +18,16 @@
 */
 void parse_http_request(const char *request)
 {
-	char *end_method = strchr(request, ' ');
-	char *path_start = end_method + 1;
-	char *path_end;
+	char path[256];
+	int status;
 	char *headers_end = strstr(request, "\r\n\r\n");
-	char *body_start = headers_end + 4; /* skip double new line */
+	char *body_start = strdup(headers_end + 4); /* skip double new line */
 	char *key, *value;
 
-	while (*path_start == ' ')
-		path_start++;
-	path_end = strchr(path_start, ' ');
-	*path_end = '\0';
-	printf("Path: %s\n", path_start);
-
+	status = sscanf(request, "%*s %255[^? ] %*s\n", path);
+	if (status < 0)
+		return;
+	printf("Path: %s\n", path);
 	while ((key = strsep(&body_start, "&")))
 	{
 		value = strchr(key, '=');
@@ -41,6 +38,7 @@ void parse_http_request(const char *request)
 			printf("Body param: \"%s\" -> \"%s\"\n", key, value);
 		}
 	}
+	free(body_start);
 }
 
 
