@@ -54,34 +54,23 @@ void parse_http_request(const char *request)
 void handle_message(const int clnt_sock)
 {
 	char chunk[CHUNKSIZE];
-	char *request = NULL;
-	int bytes_received, total_bytes_received = 0;
+	int bytes_received;
 	const char *ok_status = "HTTP/1.1 200 OK\r\n\r\n";
 
-	while (1)
-	{
-		bytes_received = recv(clnt_sock, chunk, CHUNKSIZE - 1, 0);
-		chunk[bytes_received] = '\0'; /* Null-terminate the received data */
-		total_bytes_received += bytes_received;
+	bytes_received = recv(clnt_sock, chunk, CHUNKSIZE - 1, 0);
+	chunk[bytes_received] = '\0'; /* Null-terminate the received data */
 
-		request = realloc(request, total_bytes_received + 1);
-		strcat(request, chunk);
-		if (bytes_received < 0)
-		{
-			close(clnt_sock);
-			printf("Error receiving data failed");
-			exit(EXIT_FAILURE);
-		}
-		if (bytes_received < (CHUNKSIZE - 1))
-		{
-			send(clnt_sock, ok_status, strlen(ok_status), 0);
-			break;
-		}
+	if (bytes_received < 0)
+	{
+		close(clnt_sock);
+		printf("Error receiving data failed");
+		exit(EXIT_FAILURE);
 	}
-	printf("Raw request: \"%s\"\n", request);
-	parse_http_request(request);
-	free(request);
-	request = NULL;
+	printf("Raw request: \"%s\"\n", chunk);
+
+	parse_http_request(chunk);
+
+	send(clnt_sock, ok_status, strlen(ok_status), 0);
 }
 
 /**
