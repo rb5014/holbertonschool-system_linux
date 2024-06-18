@@ -39,6 +39,8 @@ void parse_http_request(const char *request)
 		}
 	}
 	free(body_start);
+	body_start = NULL;
+	fflush(stdout);
 }
 
 
