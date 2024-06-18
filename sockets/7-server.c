@@ -8,7 +8,7 @@
 #include <pthread.h>
 
 #define PORT 8080
-#define MAXPENDING 5
+#define MAXPENDING 1
 #define CHUNKSIZE 3000
 
 /**
@@ -24,7 +24,7 @@ void parse_http_request(const char *request)
 	char *body_start = strdup(headers_end + 4); /* skip double new line */
 	char *key, *value;
 
-	status = sscanf(request, "%*s %255[^? ] %*s\n", path);
+	status = sscanf(request, "%*s %255[^? ]", path);
 	if (status < 0)
 		return;
 	printf("Path: %s\n", path);
