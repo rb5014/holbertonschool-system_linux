@@ -86,7 +86,7 @@ void parse_http_request(const char *request, const int clnt_sock)
 	sprintf(json_repr, "{\"id\":%i,\"title\":\"%s\",\"description\":\"%s\"}",
 			head->id, head->title, head->description);
 	sprintf(response,
-			"%sContent-Length: %lu\r\nContent-Type: application/json\r\n%s\r\n",
+			"%sContent-Length: %lu\r\nContent-Type: application/json\r\n\r\n%s\r\n",
 			created_mes, strlen(json_repr), json_repr);
 	send(clnt_sock, response, strlen(response), 0);
 }
