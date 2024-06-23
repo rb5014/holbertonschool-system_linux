@@ -12,15 +12,12 @@ static char *unproc_entity_mes = "HTTP/1.1 422 Unprocessable Entity\r\n\r\n";
 static char *created_mes = "HTTP/1.1 201 Created\r\n";
 static char *not_found_mes = "HTTP/1.1 404 Not Found\r\n\r\n";
 
-	/**
-	 * get_body_length - get body length by looking for Content-length header
-	 * @headers_start: start of headers to check
-	 * @clnt_sock: client socket to send message
-	 *			   if content-length header is missing
-	 * Return: length of body if it exists, -1 if header content-length is missing
-	 */
-	int
-	get_body_length(const char *headers_start)
+/**
+ * get_body_length - get body length by looking for Content-length header
+ * @headers_start: start of headers to check
+* Return: length of body if it exists, -1 if header content-length is missing
+*/
+int	get_body_length(const char *headers_start)
 {
 	int status, body_length = 0;
 
@@ -51,8 +48,8 @@ static char *not_found_mes = "HTTP/1.1 404 Not Found\r\n\r\n";
 void parse_http_request(const char *request, const int clnt_sock)
 {
 	char method[16], path[256], *body, title[256], description[1024];
-	int status, body_length = 0;
-	char *headers_start, *headers_end;
+	int status;
+	char *headers_start;
 	char json_repr[2000], response[3000];
 
 	status = sscanf(request, "%15s %255s", method, path);
@@ -63,24 +60,24 @@ void parse_http_request(const char *request, const int clnt_sock)
 		send(clnt_sock, not_found_mes, strlen(not_found_mes), 0);
 		return;
 	}
-	printf("Method: %s\nPath:%s\n", method, path);
 	headers_start = strstr(request, "\r\n") + NB_CHAR_CRLF; /* skip \r\n */
-	headers_end = strstr(headers_start, "\r\n\r\n");
-
-	body_length = get_body_length(headers_start);
-	if (body_length == -1)
+	if (get_body_length(headers_start) == -1)
 	{
 		send(clnt_sock, length_required_mes, strlen(length_required_mes), 0);
 		return;
 	}
-	body = strdup(headers_end + 2 * NB_CHAR_CRLF);
-	printf("Body: %s\n", body);
+	body = strstr(headers_start, "\r\n\r\n") + 2 * NB_CHAR_CRLF;
 	status = sscanf(body, "title=%255[^& ]&description=%1023[^\r\n]",
 					title, description);
 	if (status != 2)
 	{
-		send(clnt_sock, unproc_entity_mes, strlen(unproc_entity_mes), 0);
-		return;
+		status = sscanf(body, "description=%1023[^& ]&title=%255[^\r\n]",
+						description, title);
+		if (status != 2)
+		{
+			send(clnt_sock, unproc_entity_mes, strlen(unproc_entity_mes), 0);
+			return;
+		}
 	}
 	insert_at_head(&head, create_node(title, description));
 	sprintf(json_repr, "{\"id\":%i,\"title\":\"%s\",\"description\":\"%s\"}",
@@ -148,12 +145,14 @@ void handle_clients(const int serv_sock)
 	}
 }
 
+
 /**
- * start_server - create server, bind it and listen to clients then handle them
+ * main - Entry point
+ * create server, bind it and listen to clients then handle them
  * with handle_client function
- * Return: 0 if success, -1 otherwise
+ * Return: 0 if success, exit with EXIT_FAILURE otherwise
  */
-int start_server(void)
+int main(void)
 {
 	struct sockaddr_in serv_addr;
 	const int serv_sock = socket(AF_INET, SOCK_STREAM, 0);
@@ -175,16 +174,5 @@ int start_server(void)
 
 	close(serv_sock);
 
-	return (0);
-}
-
-/**
- * main - Entry point
- * Return: 0 if success, -1 otherwise
- */
-int main(void)
-{
-	if (start_server() < 0)
-		return (-1);
 	return (0);
 }
