@@ -11,7 +11,13 @@ todo_api_3: clean
 	gcc -g -Wall -Wextra -Werror -pedantic -o $@ 7-server.c
 
 todo_api_4: clean
-	gcc -g -Wall -Wextra -Werror -pedantic -o $@ ./create_todo/*.c
+	gcc -g -Wall -Wextra -Werror -pedantic -o $@ ./todo_tasks/*.c
+
+todo_api_5: clean
+	gcc -g -Wall -Wextra -Werror -pedantic -o $@ ./todo_tasks/*.c
+
+test: clean
+	gcc -g ./todo_tasks/*.c
 
 clean:
 	rm -f todo_api_0 todo_api_1 todo_api_2 todo_api_3 todo_api_4
