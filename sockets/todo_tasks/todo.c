@@ -22,14 +22,31 @@ todo_node_t *create_node(const char *title, const char *description)
 }
 
 /**
- * insert_at_head - insert node at head
+ * insert_at_tail - insert node at tail
  * @head: adress of pointer to current head of the list
  * @node_to_insert: pointer node to insert at head
 */
-void insert_at_head(todo_node_t **head, todo_node_t *node_to_insert)
+void insert_at_tail(todo_node_t **head, todo_node_t *node_to_insert)
 {
-	node_to_insert->next = *head;
-	*head = node_to_insert;
+	if (*head == NULL)
+	{
+		node_to_insert->next = *head;
+		*head = node_to_insert;
+	}
+	else
+	{
+		todo_node_t *tmp = *head;
+
+		while (tmp != NULL)
+		{
+			if (tmp->next == NULL)
+			{
+				tmp->next = node_to_insert;
+				break;
+			}
+			tmp = tmp->next;
+		}
+	}
 }
 
 /**

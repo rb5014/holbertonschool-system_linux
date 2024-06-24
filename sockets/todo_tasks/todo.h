@@ -19,8 +19,9 @@ typedef struct todo_node_s
 	char *description;
 	struct todo_node_s *next;
 } todo_node_t;
+
 todo_node_t *create_node(const char *title, const char *description);
-void insert_at_head(todo_node_t **head, todo_node_t *node_to_insert);
+void insert_at_tail(todo_node_t **head, todo_node_t *node_to_insert);
 todo_node_t *find_node_with_title(const todo_node_t *head, char *title);
 void remove_node(todo_node_t *head, char *title);
 char *get_node_json_repr(todo_node_t *node);

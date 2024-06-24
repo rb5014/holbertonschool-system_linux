@@ -65,6 +65,7 @@ char *parse_post_request(const char *message)
 	char title[256], description[1024];
 	char *json_repr = NULL, *response = NULL;
 	int status;
+	todo_node_t *new_node;
 
 	if (get_body_length(message) == -1)
 		return (strdup(length_required_mes));
@@ -78,8 +79,9 @@ char *parse_post_request(const char *message)
 		if (status != 2)
 			return (strdup(unproc_entity_mes));
 	}
-	insert_at_head(&head, create_node(title, description));
-	json_repr = get_node_json_repr(head);
+	new_node = create_node(title, description);
+	insert_at_tail(&head, new_node);
+	json_repr = get_node_json_repr(new_node);
 	asprintf(&response,
 			"%sContent-Length: %lu\r\nContent-Type: application/json\r\n\r\n%s\r\n",
 			created_mes, strlen(json_repr), json_repr);
