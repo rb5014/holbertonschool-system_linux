@@ -9,15 +9,38 @@ static char *length_required_mes = "HTTP/1.1 411 Length Required\r\n\r\n";
 static char *unproc_entity_mes = "HTTP/1.1 422 Unprocessable Entity\r\n\r\n";
 static char *created_mes = "HTTP/1.1 201 Created\r\n";
 static char *not_found_mes = "HTTP/1.1 404 Not Found\r\n\r\n";
-static char *methods_available[] = {"POST", "GET", NULL};
+static char *no_content_mes = "HTTP/1.1 204 No Content\r\n\r\n";
+static char *methods_available[] = {"POST", "GET", "DELETE", NULL};
 static char *paths_available[] = {"/todos", NULL};
 
 /**
- * parse_get_request - parse request to get all todo items
+ * parse_delete_request - parse request to delete a todo item
+ * @query: query of the delete request
+ * Return: Http response
+*/
+const char *parse_delete_request(const char *query)
+{
+	int node_removed = 0;
+	char *response = NULL;
+	int id = 0, status;
+
+	status = sscanf(query, "id=%i", &id);
+	node_removed = remove_node(&head, id);
+
+	if ((status != 1) || (node_removed == 0))
+		response = strdup(not_found_mes);
+	else
+		response = strdup(no_content_mes);
+
+	return (response);
+}
+
+/**
+ * parse_get_request - parse request to get one or all todo items
  * @query: query of the get request
  * Return: Http response with json representation of todo list
 */
-char *parse_get_request(const char *query)
+const char *parse_get_request(const char *query)
 {
 	todo_node_t *found_node;
 	char *json_repr;
@@ -50,7 +73,7 @@ char *parse_get_request(const char *query)
  * Return: http responsse containing json reprensation of todo node
  * if it succeeded
 */
-char *parse_post_request(const char *message)
+const char *parse_post_request(const char *message)
 {
 	const char *body;
 	char title[256], description[1024];
@@ -87,9 +110,10 @@ char *parse_post_request(const char *message)
  * @path: adress of path string to fill
  * @query: adress of query string to fill
  * @protocol: adress of protocol string to fill
- * Return: 1 if method handled and path recognized, 0 otherwise
-*/
-int parse_start_line(const char *message, char **method, char **path,
+ * Return: Http response 404 if method not handled or path not recognized
+ * Othrewise return NULL
+ */
+const char *parse_start_line(const char *message, char **method, char **path,
 					 char **query, char **protocol)
 {
 	const char *end_start_line = strstr(message, "\r\n");
@@ -97,6 +121,7 @@ int parse_start_line(const char *message, char **method, char **path,
 	char *start_line = strndup(message, length);
 	char *path_start, *query_start;
 	int i, method_handled = 0, path_recognized = 0;
+	char *response = NULL;
 
 	*method = strdup(strsep(&start_line, " "));
 	for (i = 0; methods_available[i] != NULL; i++)
@@ -120,11 +145,11 @@ int parse_start_line(const char *message, char **method, char **path,
 		if (strcmp(*path, paths_available[i]) == 0)
 			path_recognized = 1;
 	}
-
 	*protocol = strdup(strsep(&start_line, " "));
-
 	free(start_line);
-	return (method_handled & path_recognized);
+	if (!method_handled || !path_recognized)
+		response = strdup(not_found_mes);
+	return (response);
 }
 
 /**
@@ -154,24 +179,4 @@ int	get_body_length(const char *message)
 
 	/* header Content-length not found */
 	return (-1);
-}
-/**
- * parse_http_message - parse http message
- * @message: message string
- * Return: http response
- */
-char *parse_http_message(const char *message)
-{
-	char *method = NULL, *path = NULL, *query = NULL, *protocol = NULL;
-	char *response = NULL;
-
-	if (parse_start_line(message, &method, &path, &query, &protocol) == 0)
-		response = strdup(not_found_mes);
-	else if (strcmp(method, "POST") == 0)
-	{
-		response = parse_post_request(message);
-	}
-	else if (strcmp(method, "GET") == 0)
-		response = parse_get_request(query);
-	return (response);
 }

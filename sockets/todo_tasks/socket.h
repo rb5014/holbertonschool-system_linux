@@ -35,11 +35,15 @@ typedef enum err_e
 void print_err_and_exit(err_t error);
 
 /* parse.c */
+const char *parse_delete_request(const char *query);
+const char *parse_get_request(const char *query);
+const char *parse_post_request(const char *message);
+const char *parse_start_line(const char *message, char **method, char **path,
+					 char **query, char **protocol);
 int	get_body_length(const char *headers_start);
-char *parse_http_message(const char *message);
 
 /* main.c */
-void handle_clients(const int serv_sock);
 void handle_message(const int clnt_sock);
+void handle_clients(const int serv_sock);
 
 #endif /* SOCKET_H */

@@ -69,33 +69,31 @@ todo_node_t *find_node_with_id(todo_node_t *head, int id)
 }
 
 /**
- * remove_node - remove node with title
- * @head: pointer to head of list
- * @title: title of the node to remove
+ * remove_node - remove node with id
+ * @head: adress of pointer to head of list
+ * @id: id of the node to remove
+ * Return: 1 if removed, 0 otherwise
 */
-void remove_node(todo_node_t *head, char *title)
+int remove_node(todo_node_t **head, int id)
 {
-	todo_node_t *tmp = head, *prev_tmp = NULL;
-
-	if ((title == NULL) || (strlen(title) == 0))
-	{
-		printf("No title provided\n");
-		return;
-	}
+	todo_node_t *tmp = *head, *prev_tmp = NULL;
 
 	while (tmp != NULL)
 	{
-		if (strcmp(tmp->title, title) == 0) /* found node to remove */
+		if (tmp->id == id) /* found node to remove */
 		{
-			if (prev_tmp != NULL) /* update link */
+			if (tmp == *head) /* update link */
+				*head = (*head)->next; /* update head */
+			else
 				prev_tmp->next = tmp->next;
 			free(tmp);
-			return;
+			return (1);
 		}
 		prev_tmp = tmp;
 		tmp = tmp->next;
 	}
 	/* After loop, node not found */
-	printf("Todo item named \"%s\" not found\n", title);
+	printf("Todo item with id \"%i\" not found\n", id);
+	return (0);
 }
 

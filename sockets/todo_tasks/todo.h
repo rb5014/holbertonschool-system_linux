@@ -24,7 +24,7 @@ typedef struct todo_node_s
 todo_node_t *create_node(const char *title, const char *description);
 void insert_at_tail(todo_node_t **head, todo_node_t *node_to_insert);
 todo_node_t *find_node_with_id(todo_node_t *head, int id);
-void remove_node(todo_node_t *head, char *title);
+int remove_node(todo_node_t **head, int id);
 
 /* json_repr.c */
 char *get_node_json_repr(todo_node_t *node);

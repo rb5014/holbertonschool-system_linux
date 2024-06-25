@@ -14,12 +14,13 @@
  */
 void handle_message(const int clnt_sock)
 {
-	char chunk[CHUNKSIZE];
+	char message[CHUNKSIZE];
 	int bytes_received;
-	char *response;
+	const char *response;
+	char *method = NULL, *path = NULL, *query = NULL, *protocol = NULL;
 
-	bytes_received = recv(clnt_sock, chunk, CHUNKSIZE - 1, 0);
-	chunk[bytes_received] = '\0'; /* Null-terminate the received data */
+	bytes_received = recv(clnt_sock, message, CHUNKSIZE - 1, 0);
+	message[bytes_received] = '\0'; /* Null-terminate the received data */
 
 	if (bytes_received < 0)
 	{
@@ -27,9 +28,18 @@ void handle_message(const int clnt_sock)
 		printf("Error receiving data failed");
 		exit(EXIT_FAILURE);
 	}
-	printf("Raw request: \"%s\"\n", chunk);
+	printf("Raw request: \"%s\"\n", message);
 
-	response = parse_http_message(chunk);
+	response = parse_start_line(message, &method, &path, &query, &protocol);
+	if (response == NULL)
+	{
+		if (strcmp(method, "POST") == 0)
+			response = parse_post_request(message);
+		else if (strcmp(method, "GET") == 0)
+			response = parse_get_request(query);
+		else if (strcmp(method, "DELETE") == 0)
+			response = parse_delete_request(query);
+	}
 
 	send(clnt_sock, response, strlen(response), 0);
 }

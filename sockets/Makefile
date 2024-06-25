@@ -19,6 +19,9 @@ todo_api_5: clean
 todo_api_6: clean
 	gcc -g -Wall -Wextra -Werror -pedantic -o $@ ./todo_tasks/*.c
 
+todo_api_7: clean
+	gcc -g -Wall -Wextra -Werror -pedantic -o $@ ./todo_tasks/*.c
+
 test: clean
 	gcc -g ./todo_tasks/*.c
 
