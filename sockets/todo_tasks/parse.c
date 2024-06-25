@@ -14,41 +14,32 @@ static char *paths_available[] = {"/todos", NULL};
 
 /**
  * parse_get_request - parse request to get all todo items
+ * @query: query of the get request
  * Return: Http response with json representation of todo list
 */
-char *parse_get_request(void)
+char *parse_get_request(const char *query)
 {
-	todo_node_t *tmp = head;
-	char *list_json = strdup("[");
-	int first_done = 0;
+	todo_node_t *found_node;
+	char *json_repr;
 	char *response = NULL;
+	int id = 0, status;
 
-	while (tmp != NULL)
+	if (query == NULL)
 	{
-		char *node_json_repr = get_node_json_repr(tmp);
-
-		if (first_done == 0)
-		{
-			list_json = realloc(list_json,
-									 strlen(list_json) + strlen(node_json_repr) + 1);
-			first_done++;
-		}
-		else
-		{
-			list_json = realloc(list_json,
-									 strlen(list_json) + strlen(",") + strlen(node_json_repr) + 1);
-			strcat(list_json, ",");
-		}
-		strcat(list_json, node_json_repr);
-		free(node_json_repr);
-		tmp = tmp->next;
+		json_repr = get_list_json_repr(head);
 	}
-	list_json = realloc(list_json, strlen(list_json) + strlen("]"));
-	strcat(list_json, "]");
+	else
+	{
+		status = sscanf(query, "id=%i", &id);
+		found_node = find_node_with_id(head, id);
+		if ((status != 1) || (found_node == NULL))
+			return (strdup(not_found_mes));
+		json_repr = get_node_json_repr(found_node);
+	}
 
 	asprintf(&response,
 			 "%sContent-Length: %lu\r\nContent-Type: application/json\r\n\r\n%s",
-			 ok_mes, strlen(list_json), list_json);
+			 ok_mes, strlen(json_repr), json_repr);
 
 	return (response);
 }
@@ -94,15 +85,17 @@ char *parse_post_request(const char *message)
  * @message: http message
  * @method: adress of method string to fill
  * @path: adress of path string to fill
+ * @query: adress of query string to fill
  * @protocol: adress of protocol string to fill
  * Return: 1 if method handled and path recognized, 0 otherwise
 */
 int parse_start_line(const char *message, char **method, char **path,
-					 char **protocol)
+					 char **query, char **protocol)
 {
 	const char *end_start_line = strstr(message, "\r\n");
 	size_t length = end_start_line - message;
 	char *start_line = strndup(message, length);
+	char *path_start, *query_start;
 	int i, method_handled = 0, path_recognized = 0;
 
 	*method = strdup(strsep(&start_line, " "));
@@ -111,14 +104,26 @@ int parse_start_line(const char *message, char **method, char **path,
 		if (strcmp(*method, methods_available[i]) == 0)
 			method_handled = 1;
 	}
-	*path = strdup(strsep(&start_line, " "));
+	path_start = strsep(&start_line, " ");
+	query_start = strchr(path_start, '?');
+	if (query_start)
+	{
+		*query_start = '\0';
+		query_start++;
+		*query = strdup(query_start);
+		printf("Query: %s\n", *query);
+	}
+	*path = strdup(path_start);
+	printf("Path: %s\n", *path);
 	for (i = 0; paths_available[i] != NULL; i++)
 	{
 		if (strcmp(*path, paths_available[i]) == 0)
 			path_recognized = 1;
 	}
+
 	*protocol = strdup(strsep(&start_line, " "));
 
+	free(start_line);
 	return (method_handled & path_recognized);
 }
 
@@ -157,15 +162,16 @@ int	get_body_length(const char *message)
  */
 char *parse_http_message(const char *message)
 {
-	char *method = NULL, *path = NULL, *protocol = NULL;
+	char *method = NULL, *path = NULL, *query = NULL, *protocol = NULL;
 	char *response = NULL;
 
-	if (parse_start_line(message, &method, &path, &protocol) == 0)
+	if (parse_start_line(message, &method, &path, &query, &protocol) == 0)
 		response = strdup(not_found_mes);
 	else if (strcmp(method, "POST") == 0)
+	{
 		response = parse_post_request(message);
+	}
 	else if (strcmp(method, "GET") == 0)
-		response = parse_get_request();
+		response = parse_get_request(query);
 	return (response);
-
 }

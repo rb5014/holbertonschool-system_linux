@@ -50,19 +50,19 @@ void insert_at_tail(todo_node_t **head, todo_node_t *node_to_insert)
 }
 
 /**
- * find_node_with_title - find node with title
+ * find_node_with_id - find node with id
  * @head: pointer to head of list
- * @title: title of the node to find
+ * @id: id of the node to find
  * Return: pointer to the found node
 */
-todo_node_t *find_node_with_title(const todo_node_t *head, char *title)
+todo_node_t *find_node_with_id(todo_node_t *head, int id)
 {
-	const todo_node_t *tmp = head;
+	todo_node_t *tmp = head;
 
 	while (tmp != NULL)
 	{
-		if (strcmp(tmp->title, title) == 0)
-			return ((todo_node_t *) tmp);
+		if (tmp->id == id)
+			return (tmp);
 		tmp = tmp->next;
 	}
 	return (NULL);
@@ -99,17 +99,3 @@ void remove_node(todo_node_t *head, char *title)
 	printf("Todo item named \"%s\" not found\n", title);
 }
 
-/**
- * get_node_json_repr - get the json representation of a todo node
- * @node: node to get the json representation of
- * Return: the json reprensation of the node
-*/
-char *get_node_json_repr(todo_node_t *node)
-{
-	char *json_repr;
-
-	asprintf(&json_repr, "{\"id\":%i,\"title\":\"%s\",\"description\":\"%s\"}",
-			node->id, node->title, node->description);
-
-	return (json_repr);
-}
