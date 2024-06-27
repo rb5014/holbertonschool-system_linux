@@ -1,5 +1,5 @@
-strace_0:
-	gcc -Wall -Werror -Wextra -pedantic $@.c -o $@
+strace_0: clean
+	gcc -std=c90 -g -Wall -Werror -Wextra -pedantic $@.c -o $@
 
 clean: 
-	rm -rf strace_0
+	rm -f strace_0
