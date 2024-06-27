@@ -58,6 +58,8 @@ int main(int argc, char **argv)
 	{
 		/* Child process */
 		ptrace(PTRACE_TRACEME, 0, 0, 0);
+		raise(SIGSTOP);
+		argv[argc] = NULL;
 		execvp(argv[1], argv + 1);
 	}
 	else
